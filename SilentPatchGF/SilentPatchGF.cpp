@@ -8,10 +8,7 @@
 #include "MemoryMgr.h"
 
 #include "DirectDraw7Stub.h"
-#include <d3d9.h>
 #include <cassert>
-
-#pragma comment(lib, "d3d9.lib")
 
 HRESULT WINAPI DirectDrawStubCreate( GUID *lpGUID, LPVOID *lplpDD, REFIID iid, IUnknown *pUnkOuter )
 {

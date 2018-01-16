@@ -1,7 +1,21 @@
 #include "DirectDraw7Stub.h"
 
 #include <cassert>
-#include <d3d9types.h>
+
+#include <cassert>
+
+#pragma comment(lib, "d3d9.lib")
+
+DirectDraw7Stub::DirectDraw7Stub()
+{
+	m_direct3d = Direct3DCreate9(D3D_SDK_VERSION);
+	assert( m_direct3d != nullptr );
+
+	//D3DPRESENT_PARAMETERS parameters;
+
+
+	//m_direct3dDevice = m_direct3d->CreateDevice( D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, GetActiveWindow(), D3DCREATE_HARDWARE_VERTEXPROCESSING|D3DCREATE_FPU_PRESERVE )
+}
 
 
 HRESULT DirectDraw7Stub::QueryInterface(REFIID riid, LPVOID * ppvObj)
@@ -68,9 +82,20 @@ HRESULT DirectDraw7Stub::GetCaps(LPDDCAPS lpDDDriverCaps, LPDDCAPS lpDDHELCaps)
 	return DD_OK;
 }
 
-HRESULT DirectDraw7Stub::GetDisplayMode(LPDDSURFACEDESC2)
+HRESULT DirectDraw7Stub::GetDisplayMode(LPDDSURFACEDESC2 lpDDSurfaceDesc2)
 {
-	return E_NOTIMPL;
+	if ( lpDDSurfaceDesc2 == nullptr || lpDDSurfaceDesc2->dwSize != sizeof(*lpDDSurfaceDesc2) ) return DDERR_INVALIDPARAMS;
+
+	D3DDISPLAYMODE displayMode;
+	HRESULT result = m_direct3d->GetAdapterDisplayMode( D3DADAPTER_DEFAULT, &displayMode );
+	if ( result != D3D_OK ) return DDERR_INVALIDPARAMS;
+
+	lpDDSurfaceDesc2->dwWidth = displayMode.Width;
+	lpDDSurfaceDesc2->dwHeight = displayMode.Height;
+	lpDDSurfaceDesc2->dwRefreshRate = displayMode.RefreshRate;
+	lpDDSurfaceDesc2->dwFlags = DDSD_WIDTH|DDSD_HEIGHT|DDSD_REFRESHRATE;
+
+	return DD_OK;
 }
 
 HRESULT DirectDraw7Stub::GetFourCCCodes(LPDWORD lpNumCodes, LPDWORD lpCodes)
@@ -112,9 +137,9 @@ HRESULT DirectDraw7Stub::RestoreDisplayMode(void)
 
 HRESULT DirectDraw7Stub::SetCooperativeLevel(HWND hWnd, DWORD dwFlags)
 {
-	assert( dwFlags == (DDSCL_EXCLUSIVE|DDSCL_FULLSCREEN) );
-
-	return DD_OK;
+	// We don't want to allow the app to go fullscreen here - but allow it to act like a normal application
+	// using a fallback code the game has
+	return dwFlags == DDSCL_NORMAL ? DD_OK : DDERR_EXCLUSIVEMODEALREADYSET;
 }
 
 HRESULT DirectDraw7Stub::SetDisplayMode(DWORD, DWORD, DWORD, DWORD, DWORD)
