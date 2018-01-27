@@ -7,12 +7,12 @@
 #include <windows.h>
 #include "MemoryMgr.h"
 
-#include "DirectDraw7Stub.h"
+#include "DirectDraw7_DX9.h"
 #include <cassert>
 
-HRESULT WINAPI DirectDrawStubCreate( GUID *lpGUID, LPVOID *lplpDD, REFIID iid, IUnknown *pUnkOuter )
+HRESULT WINAPI DirectDrawDX9Create( GUID *lpGUID, LPVOID *lplpDD, REFIID iid, IUnknown *pUnkOuter )
 {
-	IDirectDraw7* stub = new DirectDraw7Stub();
+	IDirectDraw7* stub = new DirectDraw7_DX9();
 	*reinterpret_cast<IDirectDraw7**>(lplpDD) = stub;
 	return DD_OK;
 }
@@ -31,7 +31,7 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD reason, LPVOID lpReserved)
 			ScopedUnprotect::Section Section2( GetModuleHandle( nullptr ), ".rdata");
 			strcpy_s( (char*)0xA8F4D8, 16, "log.log" );
 
-			Memory::InjectHook( 0x8C58D6, DirectDrawStubCreate );
+			Memory::InjectHook( 0x8C58D6, DirectDrawDX9Create );
 
 			break;
 		}

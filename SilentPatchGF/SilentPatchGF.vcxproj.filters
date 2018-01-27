@@ -13,21 +13,45 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Header Files\wrappers">
+      <UniqueIdentifier>{84f83807-90e6-497f-9240-b6819a2b9471}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\wrappers">
+      <UniqueIdentifier>{357e8094-3dd2-4c37-a121-cf8fcd7c095d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MemoryMgr.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DirectDraw7Stub.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="DirectDraw7_DX9.h">
+      <Filter>Header Files\wrappers</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectDraw7Surface_DX9.h">
+      <Filter>Header Files\wrappers</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectDraw7Surface_DX9Device.h">
+      <Filter>Header Files\wrappers</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectDraw7Surface_DX9Primitive.h">
+      <Filter>Header Files\wrappers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SilentPatchGF.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="DirectDraw7Stub.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="DirectDraw7_DX9.cpp">
+      <Filter>Source Files\wrappers</Filter>
+    </ClCompile>
+    <ClCompile Include="DirectDraw7Surface_DX9.cpp">
+      <Filter>Source Files\wrappers</Filter>
+    </ClCompile>
+    <ClCompile Include="DirectDraw7Surface_DX9Device.cpp">
+      <Filter>Source Files\wrappers</Filter>
+    </ClCompile>
+    <ClCompile Include="DirectDraw7Surface_DX9Primitive.cpp">
+      <Filter>Source Files\wrappers</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
