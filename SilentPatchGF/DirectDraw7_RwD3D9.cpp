@@ -1,9 +1,12 @@
 #include "DirectDraw7_RwD3D9.h"
 #include "DirectDraw7Surface_RwD3D9Overlay.h"
+#include "DirectDraw7Surface_RwD3D9RT.h"
 
 #include <cassert>
 
 #pragma comment(lib, "d3d9.lib")
+
+DD7_RwD3D9OverlayRenderQueue DirectDraw7_RwD3D9::ms_overlayRenderQueue;
 
 DirectDraw7_RwD3D9::DirectDraw7_RwD3D9()
 {
@@ -66,14 +69,14 @@ HRESULT DirectDraw7_RwD3D9::CreateSurface(LPDDSURFACEDESC2 lpDDSurfaceDesc2, LPD
 
 	if ( (lpDDSurfaceDesc2->ddsCaps.dwCaps & DDSCAPS_PRIMARYSURFACE) != 0 )
 	{
-		// For primary surface, we create an empty wrapper (not needed)
-		IDirectDrawSurface7* surface = new DirectDraw7Surface_RwD3D9();
+		// For primary surface, we create an empty wrapper (only pushing overlays to render queue)
+		IDirectDrawSurface7* surface = new DirectDraw7Surface_RwD3D9RT( &ms_overlayRenderQueue );
 		*lplpDDSurface = surface;
 	}
 	else if ( (lpDDSurfaceDesc2->ddsCaps.dwCaps & DDSCAPS_OVERLAY) != 0 ) // If it's not an overlay, something went wrong
 	{
 		// For overlay surface, we create a primitive to be rendered
-		IDirectDrawSurface7* surface = new DirectDraw7Surface_RwD3D9Overlay();
+		IDirectDrawSurface7* surface = new DirectDraw7Surface_RwD3D9Overlay( lpDDSurfaceDesc2->dwWidth, lpDDSurfaceDesc2->dwHeight );
 		*lplpDDSurface = surface;
 	}
 	else

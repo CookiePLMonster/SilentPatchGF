@@ -56,19 +56,8 @@ public:
 	virtual HRESULT WINAPI SetLOD(DWORD) override;
 	virtual HRESULT WINAPI GetLOD(LPDWORD) override;
 
-	virtual ~DirectDraw7Surface_RwD3D9()
-	{
-		if ( m_directDrawProxy != nullptr )
-		{
-			m_directDrawProxy->Release();
-		}
-	}
-
-	DirectDraw7Surface_RwD3D9() = default;
+	virtual ~DirectDraw7Surface_RwD3D9() = default;
 
 private:
 	LONG m_refCount = 1;
-
-protected:
-	DirectDraw7_RwD3D9* m_directDrawProxy = nullptr;
 };

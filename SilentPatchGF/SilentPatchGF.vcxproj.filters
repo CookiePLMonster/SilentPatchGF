@@ -31,7 +31,10 @@
       <Filter>Header Files\wrappers</Filter>
     </ClInclude>
     <ClInclude Include="DirectDraw7Surface_RwD3D9Overlay.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\wrappers</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectDraw7Surface_RwD3D9RT.h">
+      <Filter>Header Files\wrappers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -45,6 +48,12 @@
       <Filter>Source Files\wrappers</Filter>
     </ClCompile>
     <ClCompile Include="DirectDraw7Surface_RwD3D9Overlay.cpp">
+      <Filter>Source Files\wrappers</Filter>
+    </ClCompile>
+    <ClCompile Include="OverlayRenderQueue.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RW.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

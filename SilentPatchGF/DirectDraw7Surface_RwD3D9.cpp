@@ -263,68 +263,6 @@ RwCamera    *RwCameraEndUpdate(RwCamera * camera)
 	return camera->endUpdate(camera);
 }
 
-
-static void DrawOverlay( RwCamera* camera )
-{
-	if ( !drawOverlay ) return;
-	drawOverlay = false;
-
-	if ( RwCameraBeginUpdate( camera ) )
-	{
-		RwIm2DVertex vertices[5] = {};
-
-		size_t index = 0;
-		vertices[index].x = 640.0f;
-		vertices[index].y = 0.0f;
-		vertices[index].z = 0.0f;
-		vertices[index].rhw = 0.0f;
-		vertices[index].u = 0.0f;
-		vertices[index].v = 0.0f;
-		vertices[index].emissiveColor = 0xFF0000FF;
-		index++;
-
-		vertices[index].x = 0.0f;
-		vertices[index].y = 480.0f;
-		vertices[index].z = 0.0f;
-		vertices[index].rhw = 0.0f;
-		vertices[index].u = 0.0f;
-		vertices[index].v = 0.0f;
-		vertices[index].emissiveColor = 0xFF0000FF;
-		index++;
-
-		vertices[index].x = 0.0f;
-		vertices[index].y = 0.0f;
-		vertices[index].z = 0.0f;
-		vertices[index].rhw = 0.0f;
-		vertices[index].u = 0.0f;
-		vertices[index].v = 0.0f;
-		vertices[index].emissiveColor = 0xFF0000FF;
-		index++;
-
-		vertices[index].x = 0.0f;
-		vertices[index].y = 480.0f;
-		vertices[index].z = 0.0f;
-		vertices[index].rhw = 0.0f;
-		vertices[index].u = 0.0f;
-		vertices[index].v = 0.0f;
-		vertices[index].emissiveColor = 0xFF0000FF;
-		index++;
-
-		vertices[index].x = 640.0f;
-		vertices[index].y = 480.0f;
-		vertices[index].z = 0.0f;
-		vertices[index].rhw = 0.0f;
-		vertices[index].u = 0.0f;
-		vertices[index].v = 0.0f;
-		vertices[index].emissiveColor = 0xFF0000FF;
-		index++;
-
-		RwIm2DRenderPrimitive(rwPRIMTYPETRIFAN, vertices, index);
-
-		RwCameraEndUpdate( camera );
-	}
-}
-
 #include "MemoryMgr.h"
 
 WRAPPER RwRaster    *RwRasterShowRaster(RwRaster * raster, void *dev, RwUInt32 flags) { EAXJMP(0x75E640); }
@@ -341,8 +279,3 @@ RwCameraShowRaster(RwCamera *camera, void *dev, RwUInt32 flags)
 	return NULL;
 }
 
-RwCamera *RwCameraShowRaster_DrawOverlay(RwCamera * camera, void *pDev, RwUInt32 flags)
-{
-	DrawOverlay( camera );
-	return RwCameraShowRaster( camera, pDev, flags );
-}

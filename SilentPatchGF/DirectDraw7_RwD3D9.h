@@ -2,6 +2,21 @@
 
 #include <ddraw.h>
 #include <d3d9.h>
+#include <vector>
+
+class DD7_RwD3D9OverlayRenderQueue
+{
+public:
+	void PushToQueue( void* raster, void* verts )
+	{
+		m_queue.emplace_back( raster, verts );
+	}
+
+	void Render( void* camera );
+
+private:
+	std::vector< std::pair<void*, void*> > m_queue;
+};
 
 class DirectDraw7_RwD3D9 final : public IDirectDraw7
 {
@@ -38,6 +53,8 @@ public:
 	virtual HRESULT WINAPI StartModeTest(LPSIZE, DWORD, DWORD) override;
 	virtual HRESULT WINAPI EvaluateMode(DWORD, DWORD *) override;
 
+	static DD7_RwD3D9OverlayRenderQueue& OverlayRenderQueue() { return ms_overlayRenderQueue; }
+
 	DirectDraw7_RwD3D9();
 
 private:
@@ -49,5 +66,8 @@ private:
 
 	bool m_adapterDisplayModeGathered = false;
 	D3DDISPLAYMODE m_adapterDisplayMode;
+
+	static DD7_RwD3D9OverlayRenderQueue ms_overlayRenderQueue;
 };
 
+void InstallRenderQueueHook();

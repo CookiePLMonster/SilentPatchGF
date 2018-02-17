@@ -80,6 +80,7 @@
   <ItemGroup>
     <ClInclude Include="DirectDraw7Surface_RwD3D9.h" />
     <ClInclude Include="DirectDraw7Surface_RwD3D9Overlay.h" />
+    <ClInclude Include="DirectDraw7Surface_RwD3D9RT.h" />
     <ClInclude Include="DirectDraw7_RwD3D9.h" />
     <ClInclude Include="MemoryMgr.h" />
   </ItemGroup>
@@ -87,6 +88,8 @@
     <ClCompile Include="DirectDraw7Surface_RwD3D9.cpp" />
     <ClCompile Include="DirectDraw7Surface_RwD3D9Overlay.cpp" />
     <ClCompile Include="DirectDraw7_RwD3D9.cpp" />
+    <ClCompile Include="OverlayRenderQueue.cpp" />
+    <ClCompile Include="RW.cpp" />
     <ClCompile Include="SilentPatchGF.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
