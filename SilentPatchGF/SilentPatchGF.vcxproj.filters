@@ -24,34 +24,28 @@
     <ClInclude Include="MemoryMgr.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DirectDraw7_DX9.h">
+    <ClInclude Include="DirectDraw7_RwD3D9.h">
       <Filter>Header Files\wrappers</Filter>
     </ClInclude>
-    <ClInclude Include="DirectDraw7Surface_DX9.h">
+    <ClInclude Include="DirectDraw7Surface_RwD3D9.h">
       <Filter>Header Files\wrappers</Filter>
     </ClInclude>
-    <ClInclude Include="DirectDraw7Surface_DX9Device.h">
-      <Filter>Header Files\wrappers</Filter>
-    </ClInclude>
-    <ClInclude Include="DirectDraw7Surface_DX9Primitive.h">
-      <Filter>Header Files\wrappers</Filter>
+    <ClInclude Include="DirectDraw7Surface_RwD3D9Overlay.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SilentPatchGF.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="DirectDraw7_DX9.cpp">
+    <ClCompile Include="DirectDraw7_RwD3D9.cpp">
       <Filter>Source Files\wrappers</Filter>
     </ClCompile>
-    <ClCompile Include="DirectDraw7Surface_DX9.cpp">
+    <ClCompile Include="DirectDraw7Surface_RwD3D9.cpp">
       <Filter>Source Files\wrappers</Filter>
     </ClCompile>
-    <ClCompile Include="DirectDraw7Surface_DX9Device.cpp">
-      <Filter>Source Files\wrappers</Filter>
-    </ClCompile>
-    <ClCompile Include="DirectDraw7Surface_DX9Primitive.cpp">
-      <Filter>Source Files\wrappers</Filter>
+    <ClCompile Include="DirectDraw7Surface_RwD3D9Overlay.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

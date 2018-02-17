@@ -1,8 +1,8 @@
 #pragma once
-#include "DirectDraw7_DX9.h"
+#include "DirectDraw7_RwD3D9.h"
 
 
-class DirectDraw7Surface_DX9 : public IDirectDrawSurface7
+class DirectDraw7Surface_RwD3D9 : public IDirectDrawSurface7
 {
 public:
 	// Inherited via IDirectDrawSurface7
@@ -56,7 +56,7 @@ public:
 	virtual HRESULT WINAPI SetLOD(DWORD) override;
 	virtual HRESULT WINAPI GetLOD(LPDWORD) override;
 
-	virtual ~DirectDraw7Surface_DX9()
+	virtual ~DirectDraw7Surface_RwD3D9()
 	{
 		if ( m_directDrawProxy != nullptr )
 		{
@@ -64,12 +64,11 @@ public:
 		}
 	}
 
-protected:
-	DirectDraw7Surface_DX9() = default;
+	DirectDraw7Surface_RwD3D9() = default;
 
 private:
 	LONG m_refCount = 1;
 
 protected:
-	DirectDraw7_DX9* m_directDrawProxy = nullptr;
+	DirectDraw7_RwD3D9* m_directDrawProxy = nullptr;
 };

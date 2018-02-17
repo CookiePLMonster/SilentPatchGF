@@ -1,12 +1,11 @@
-#include "DirectDraw7_DX9.h"
-#include "DirectDraw7Surface_DX9Device.h"
-#include "DirectDraw7Surface_DX9Primitive.h"
+#include "DirectDraw7_RwD3D9.h"
+#include "DirectDraw7Surface_RwD3D9Overlay.h"
 
 #include <cassert>
 
 #pragma comment(lib, "d3d9.lib")
 
-DirectDraw7_DX9::DirectDraw7_DX9()
+DirectDraw7_RwD3D9::DirectDraw7_RwD3D9()
 {
 	m_d3d = Direct3DCreate9(D3D_SDK_VERSION);
 	assert( m_d3d != nullptr );
@@ -17,7 +16,7 @@ DirectDraw7_DX9::DirectDraw7_DX9()
 	//m_direct3dDevice = m_direct3d->CreateDevice( D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, GetActiveWindow(), D3DCREATE_HARDWARE_VERTEXPROCESSING|D3DCREATE_FPU_PRESERVE )
 }
 
-const D3DDISPLAYMODE& DirectDraw7_DX9::CollectDisplayMode()
+const D3DDISPLAYMODE& DirectDraw7_RwD3D9::CollectDisplayMode()
 {
 	if ( !m_adapterDisplayModeGathered )
 	{
@@ -28,37 +27,37 @@ const D3DDISPLAYMODE& DirectDraw7_DX9::CollectDisplayMode()
 }
 
 
-HRESULT DirectDraw7_DX9::QueryInterface(REFIID riid, LPVOID * ppvObj)
+HRESULT DirectDraw7_RwD3D9::QueryInterface(REFIID riid, LPVOID * ppvObj)
 {
 	return E_NOTIMPL;
 }
 
-ULONG DirectDraw7_DX9::AddRef(void)
+ULONG DirectDraw7_RwD3D9::AddRef(void)
 {
 	return 0;
 }
 
-ULONG DirectDraw7_DX9::Release(void)
+ULONG DirectDraw7_RwD3D9::Release(void)
 {
 	return 0;
 }
 
-HRESULT DirectDraw7_DX9::Compact(void)
+HRESULT DirectDraw7_RwD3D9::Compact(void)
 {
 	return E_NOTIMPL;
 }
 
-HRESULT DirectDraw7_DX9::CreateClipper(DWORD, LPDIRECTDRAWCLIPPER *, IUnknown *)
+HRESULT DirectDraw7_RwD3D9::CreateClipper(DWORD, LPDIRECTDRAWCLIPPER *, IUnknown *)
 {
 	return E_NOTIMPL;
 }
 
-HRESULT DirectDraw7_DX9::CreatePalette(DWORD, LPPALETTEENTRY, LPDIRECTDRAWPALETTE *, IUnknown *)
+HRESULT DirectDraw7_RwD3D9::CreatePalette(DWORD, LPPALETTEENTRY, LPDIRECTDRAWPALETTE *, IUnknown *)
 {
 	return E_NOTIMPL;
 }
 
-HRESULT DirectDraw7_DX9::CreateSurface(LPDDSURFACEDESC2 lpDDSurfaceDesc2, LPDIRECTDRAWSURFACE7 * lplpDDSurface, IUnknown * pUnkOuter)
+HRESULT DirectDraw7_RwD3D9::CreateSurface(LPDDSURFACEDESC2 lpDDSurfaceDesc2, LPDIRECTDRAWSURFACE7 * lplpDDSurface, IUnknown * pUnkOuter)
 {
 	if ( lpDDSurfaceDesc2 == nullptr || lplpDDSurface == nullptr || pUnkOuter != nullptr ) return DDERR_INVALIDPARAMS;
 
@@ -67,14 +66,14 @@ HRESULT DirectDraw7_DX9::CreateSurface(LPDDSURFACEDESC2 lpDDSurfaceDesc2, LPDIRE
 
 	if ( (lpDDSurfaceDesc2->ddsCaps.dwCaps & DDSCAPS_PRIMARYSURFACE) != 0 )
 	{
-		// For primary surface, we create a device-surface wrapper
-		IDirectDrawSurface7* surface = new DirectDraw7Surface_DX9Device();
+		// For primary surface, we create an empty wrapper (not needed)
+		IDirectDrawSurface7* surface = new DirectDraw7Surface_RwD3D9();
 		*lplpDDSurface = surface;
 	}
 	else if ( (lpDDSurfaceDesc2->ddsCaps.dwCaps & DDSCAPS_OVERLAY) != 0 ) // If it's not an overlay, something went wrong
 	{
 		// For overlay surface, we create a primitive to be rendered
-		IDirectDrawSurface7* surface = new DirectDraw7Surface_DX9Primitive();
+		IDirectDrawSurface7* surface = new DirectDraw7Surface_RwD3D9Overlay();
 		*lplpDDSurface = surface;
 	}
 	else
@@ -85,33 +84,33 @@ HRESULT DirectDraw7_DX9::CreateSurface(LPDDSURFACEDESC2 lpDDSurfaceDesc2, LPDIRE
 	return DD_OK;
 }
 
-HRESULT DirectDraw7_DX9::DuplicateSurface(LPDIRECTDRAWSURFACE7, LPDIRECTDRAWSURFACE7 *)
+HRESULT DirectDraw7_RwD3D9::DuplicateSurface(LPDIRECTDRAWSURFACE7, LPDIRECTDRAWSURFACE7 *)
 {
 	return E_NOTIMPL;
 }
 
-HRESULT DirectDraw7_DX9::EnumDisplayModes(DWORD, LPDDSURFACEDESC2, LPVOID, LPDDENUMMODESCALLBACK2)
+HRESULT DirectDraw7_RwD3D9::EnumDisplayModes(DWORD, LPDDSURFACEDESC2, LPVOID, LPDDENUMMODESCALLBACK2)
 {
 	return E_NOTIMPL;
 }
 
-HRESULT DirectDraw7_DX9::EnumSurfaces(DWORD, LPDDSURFACEDESC2, LPVOID, LPDDENUMSURFACESCALLBACK7)
+HRESULT DirectDraw7_RwD3D9::EnumSurfaces(DWORD, LPDDSURFACEDESC2, LPVOID, LPDDENUMSURFACESCALLBACK7)
 {
 	return E_NOTIMPL;
 }
 
-HRESULT DirectDraw7_DX9::FlipToGDISurface(void)
+HRESULT DirectDraw7_RwD3D9::FlipToGDISurface(void)
 {
 	return E_NOTIMPL;
 }
 
-HRESULT DirectDraw7_DX9::GetCaps(LPDDCAPS lpDDDriverCaps, LPDDCAPS lpDDHELCaps)
+HRESULT DirectDraw7_RwD3D9::GetCaps(LPDDCAPS lpDDDriverCaps, LPDDCAPS lpDDHELCaps)
 {
 	lpDDDriverCaps->dwCaps |= DDCAPS_OVERLAY|DDCAPS_OVERLAYFOURCC;
 	return DD_OK;
 }
 
-HRESULT DirectDraw7_DX9::GetDisplayMode(LPDDSURFACEDESC2 lpDDSurfaceDesc2)
+HRESULT DirectDraw7_RwD3D9::GetDisplayMode(LPDDSURFACEDESC2 lpDDSurfaceDesc2)
 {
 	if ( lpDDSurfaceDesc2 == nullptr || lpDDSurfaceDesc2->dwSize != sizeof(*lpDDSurfaceDesc2) ) return DDERR_INVALIDPARAMS;
 
@@ -125,91 +124,91 @@ HRESULT DirectDraw7_DX9::GetDisplayMode(LPDDSURFACEDESC2 lpDDSurfaceDesc2)
 	return DD_OK;
 }
 
-HRESULT DirectDraw7_DX9::GetFourCCCodes(LPDWORD lpNumCodes, LPDWORD lpCodes)
+HRESULT DirectDraw7_RwD3D9::GetFourCCCodes(LPDWORD lpNumCodes, LPDWORD lpCodes)
 {
 	*lpNumCodes = 1;
 	lpCodes[0] = D3DFMT_YUY2;
 	return DD_OK;
 }
 
-HRESULT DirectDraw7_DX9::GetGDISurface(LPDIRECTDRAWSURFACE7 *)
+HRESULT DirectDraw7_RwD3D9::GetGDISurface(LPDIRECTDRAWSURFACE7 *)
 {
 	return E_NOTIMPL;
 }
 
-HRESULT DirectDraw7_DX9::GetMonitorFrequency(LPDWORD)
+HRESULT DirectDraw7_RwD3D9::GetMonitorFrequency(LPDWORD)
 {
 	return E_NOTIMPL;
 }
 
-HRESULT DirectDraw7_DX9::GetScanLine(LPDWORD)
+HRESULT DirectDraw7_RwD3D9::GetScanLine(LPDWORD)
 {
 	return E_NOTIMPL;
 }
 
-HRESULT DirectDraw7_DX9::GetVerticalBlankStatus(LPBOOL)
+HRESULT DirectDraw7_RwD3D9::GetVerticalBlankStatus(LPBOOL)
 {
 	return E_NOTIMPL;
 }
 
-HRESULT DirectDraw7_DX9::Initialize(GUID *)
+HRESULT DirectDraw7_RwD3D9::Initialize(GUID *)
 {
 	return E_NOTIMPL;
 }
 
-HRESULT DirectDraw7_DX9::RestoreDisplayMode(void)
+HRESULT DirectDraw7_RwD3D9::RestoreDisplayMode(void)
 {
 	return E_NOTIMPL;
 }
 
-HRESULT DirectDraw7_DX9::SetCooperativeLevel(HWND hWnd, DWORD dwFlags)
+HRESULT DirectDraw7_RwD3D9::SetCooperativeLevel(HWND hWnd, DWORD dwFlags)
 {
 	// We don't want to allow the app to go fullscreen here - but allow it to act like a normal application
 	// using a fallback code the game has
 	return dwFlags == DDSCL_NORMAL ? DD_OK : DDERR_EXCLUSIVEMODEALREADYSET;
 }
 
-HRESULT DirectDraw7_DX9::SetDisplayMode(DWORD, DWORD, DWORD, DWORD, DWORD)
+HRESULT DirectDraw7_RwD3D9::SetDisplayMode(DWORD, DWORD, DWORD, DWORD, DWORD)
 {
 	return E_NOTIMPL;
 }
 
-HRESULT DirectDraw7_DX9::WaitForVerticalBlank(DWORD, HANDLE)
+HRESULT DirectDraw7_RwD3D9::WaitForVerticalBlank(DWORD, HANDLE)
 {
 	return E_NOTIMPL;
 }
 
-HRESULT DirectDraw7_DX9::GetAvailableVidMem(LPDDSCAPS2, LPDWORD, LPDWORD)
+HRESULT DirectDraw7_RwD3D9::GetAvailableVidMem(LPDDSCAPS2, LPDWORD, LPDWORD)
 {
 	return E_NOTIMPL;
 }
 
-HRESULT DirectDraw7_DX9::GetSurfaceFromDC(HDC, LPDIRECTDRAWSURFACE7 *)
+HRESULT DirectDraw7_RwD3D9::GetSurfaceFromDC(HDC, LPDIRECTDRAWSURFACE7 *)
 {
 	return E_NOTIMPL;
 }
 
-HRESULT DirectDraw7_DX9::RestoreAllSurfaces(void)
+HRESULT DirectDraw7_RwD3D9::RestoreAllSurfaces(void)
 {
 	return E_NOTIMPL;
 }
 
-HRESULT DirectDraw7_DX9::TestCooperativeLevel(void)
+HRESULT DirectDraw7_RwD3D9::TestCooperativeLevel(void)
 {
 	return E_NOTIMPL;
 }
 
-HRESULT DirectDraw7_DX9::GetDeviceIdentifier(LPDDDEVICEIDENTIFIER2, DWORD)
+HRESULT DirectDraw7_RwD3D9::GetDeviceIdentifier(LPDDDEVICEIDENTIFIER2, DWORD)
 {
 	return E_NOTIMPL;
 }
 
-HRESULT DirectDraw7_DX9::StartModeTest(LPSIZE, DWORD, DWORD)
+HRESULT DirectDraw7_RwD3D9::StartModeTest(LPSIZE, DWORD, DWORD)
 {
 	return E_NOTIMPL;
 }
 
-HRESULT DirectDraw7_DX9::EvaluateMode(DWORD, DWORD *)
+HRESULT DirectDraw7_RwD3D9::EvaluateMode(DWORD, DWORD *)
 {
 	return E_NOTIMPL;
 }

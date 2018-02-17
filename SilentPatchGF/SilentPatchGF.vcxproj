@@ -78,17 +78,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="DirectDraw7Surface_DX9Device.h" />
-    <ClInclude Include="DirectDraw7Surface_DX9.h" />
-    <ClInclude Include="DirectDraw7Surface_DX9Primitive.h" />
-    <ClInclude Include="DirectDraw7_DX9.h" />
+    <ClInclude Include="DirectDraw7Surface_RwD3D9.h" />
+    <ClInclude Include="DirectDraw7Surface_RwD3D9Overlay.h" />
+    <ClInclude Include="DirectDraw7_RwD3D9.h" />
     <ClInclude Include="MemoryMgr.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="DirectDraw7Surface_DX9Device.cpp" />
-    <ClCompile Include="DirectDraw7Surface_DX9.cpp" />
-    <ClCompile Include="DirectDraw7Surface_DX9Primitive.cpp" />
-    <ClCompile Include="DirectDraw7_DX9.cpp" />
+    <ClCompile Include="DirectDraw7Surface_RwD3D9.cpp" />
+    <ClCompile Include="DirectDraw7Surface_RwD3D9Overlay.cpp" />
+    <ClCompile Include="DirectDraw7_RwD3D9.cpp" />
     <ClCompile Include="SilentPatchGF.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

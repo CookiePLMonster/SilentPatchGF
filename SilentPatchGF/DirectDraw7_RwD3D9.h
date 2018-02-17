@@ -3,7 +3,7 @@
 #include <ddraw.h>
 #include <d3d9.h>
 
-class DirectDraw7_DX9 final : public IDirectDraw7
+class DirectDraw7_RwD3D9 final : public IDirectDraw7
 {
 public:
 	// Inherited via IDirectDraw7
@@ -38,7 +38,7 @@ public:
 	virtual HRESULT WINAPI StartModeTest(LPSIZE, DWORD, DWORD) override;
 	virtual HRESULT WINAPI EvaluateMode(DWORD, DWORD *) override;
 
-	DirectDraw7_DX9();
+	DirectDraw7_RwD3D9();
 
 private:
 	const D3DDISPLAYMODE& CollectDisplayMode();

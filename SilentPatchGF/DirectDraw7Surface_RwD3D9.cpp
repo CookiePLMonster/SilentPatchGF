@@ -1,0 +1,348 @@
+#include "DirectDraw7Surface_RwD3D9.h"
+
+#include <rwcore.h>
+#define RwEngineInstance (*rwengine)
+
+void** rwengine = (void**)0x0102EAB8;
+
+
+HRESULT DirectDraw7Surface_RwD3D9::QueryInterface(REFIID riid, LPVOID * ppvObj)
+{
+	return E_NOTIMPL;
+}
+
+ULONG DirectDraw7Surface_RwD3D9::AddRef(void)
+{
+	return 0;
+}
+
+ULONG DirectDraw7Surface_RwD3D9::Release(void)
+{
+	return 0;
+}
+
+HRESULT DirectDraw7Surface_RwD3D9::AddAttachedSurface(LPDIRECTDRAWSURFACE7)
+{
+	return E_NOTIMPL;
+}
+
+HRESULT DirectDraw7Surface_RwD3D9::AddOverlayDirtyRect(LPRECT)
+{
+	return E_NOTIMPL;
+}
+
+HRESULT DirectDraw7Surface_RwD3D9::Blt(LPRECT, LPDIRECTDRAWSURFACE7, LPRECT, DWORD, LPDDBLTFX)
+{
+	return E_NOTIMPL;
+}
+
+HRESULT DirectDraw7Surface_RwD3D9::BltBatch(LPDDBLTBATCH, DWORD, DWORD)
+{
+	return E_NOTIMPL;
+}
+
+HRESULT DirectDraw7Surface_RwD3D9::BltFast(DWORD, DWORD, LPDIRECTDRAWSURFACE7, LPRECT, DWORD)
+{
+	return E_NOTIMPL;
+}
+
+HRESULT DirectDraw7Surface_RwD3D9::DeleteAttachedSurface(DWORD, LPDIRECTDRAWSURFACE7)
+{
+	return E_NOTIMPL;
+}
+
+HRESULT DirectDraw7Surface_RwD3D9::EnumAttachedSurfaces(LPVOID, LPDDENUMSURFACESCALLBACK7)
+{
+	return E_NOTIMPL;
+}
+
+HRESULT DirectDraw7Surface_RwD3D9::EnumOverlayZOrders(DWORD, LPVOID, LPDDENUMSURFACESCALLBACK7)
+{
+	return E_NOTIMPL;
+}
+
+HRESULT DirectDraw7Surface_RwD3D9::Flip(LPDIRECTDRAWSURFACE7, DWORD)
+{
+	return E_NOTIMPL;
+}
+
+HRESULT DirectDraw7Surface_RwD3D9::GetAttachedSurface(LPDDSCAPS2, LPDIRECTDRAWSURFACE7 *)
+{
+	return E_NOTIMPL;
+}
+
+HRESULT DirectDraw7Surface_RwD3D9::GetBltStatus(DWORD)
+{
+	return E_NOTIMPL;
+}
+
+HRESULT DirectDraw7Surface_RwD3D9::GetCaps(LPDDSCAPS2)
+{
+	return E_NOTIMPL;
+}
+
+HRESULT DirectDraw7Surface_RwD3D9::GetClipper(LPDIRECTDRAWCLIPPER *)
+{
+	return E_NOTIMPL;
+}
+
+HRESULT DirectDraw7Surface_RwD3D9::GetColorKey(DWORD, LPDDCOLORKEY)
+{
+	return E_NOTIMPL;
+}
+
+HRESULT DirectDraw7Surface_RwD3D9::GetDC(HDC *)
+{
+	return E_NOTIMPL;
+}
+
+HRESULT DirectDraw7Surface_RwD3D9::GetFlipStatus(DWORD)
+{
+	return E_NOTIMPL;
+}
+
+HRESULT DirectDraw7Surface_RwD3D9::GetOverlayPosition(LPLONG, LPLONG)
+{
+	return E_NOTIMPL;
+}
+
+HRESULT DirectDraw7Surface_RwD3D9::GetPalette(LPDIRECTDRAWPALETTE *)
+{
+	return E_NOTIMPL;
+}
+
+HRESULT DirectDraw7Surface_RwD3D9::GetPixelFormat(LPDDPIXELFORMAT)
+{
+	return E_NOTIMPL;
+}
+
+HRESULT DirectDraw7Surface_RwD3D9::GetSurfaceDesc(LPDDSURFACEDESC2)
+{
+	return E_NOTIMPL;
+}
+
+HRESULT DirectDraw7Surface_RwD3D9::Initialize(LPDIRECTDRAW, LPDDSURFACEDESC2)
+{
+	return E_NOTIMPL;
+}
+
+HRESULT DirectDraw7Surface_RwD3D9::IsLost(void)
+{
+	return E_NOTIMPL;
+}
+
+HRESULT DirectDraw7Surface_RwD3D9::Lock(LPRECT, LPDDSURFACEDESC2, DWORD, HANDLE)
+{
+	return E_NOTIMPL;
+}
+
+HRESULT DirectDraw7Surface_RwD3D9::ReleaseDC(HDC)
+{
+	return E_NOTIMPL;
+}
+
+HRESULT DirectDraw7Surface_RwD3D9::Restore(void)
+{
+	return E_NOTIMPL;
+}
+
+HRESULT DirectDraw7Surface_RwD3D9::SetClipper(LPDIRECTDRAWCLIPPER)
+{
+	return E_NOTIMPL;
+}
+
+HRESULT DirectDraw7Surface_RwD3D9::SetColorKey(DWORD, LPDDCOLORKEY)
+{
+	return E_NOTIMPL;
+}
+
+HRESULT DirectDraw7Surface_RwD3D9::SetOverlayPosition(LONG, LONG)
+{
+	return E_NOTIMPL;
+}
+
+HRESULT DirectDraw7Surface_RwD3D9::SetPalette(LPDIRECTDRAWPALETTE)
+{
+	return E_NOTIMPL;
+}
+
+HRESULT DirectDraw7Surface_RwD3D9::Unlock(LPRECT)
+{
+	return E_NOTIMPL;
+}
+
+static bool drawOverlay = false;
+HRESULT DirectDraw7Surface_RwD3D9::UpdateOverlay(LPRECT, LPDIRECTDRAWSURFACE7, LPRECT, DWORD, LPDDOVERLAYFX)
+{
+	drawOverlay = true;
+	return E_NOTIMPL;
+}
+
+HRESULT DirectDraw7Surface_RwD3D9::UpdateOverlayDisplay(DWORD)
+{
+	return E_NOTIMPL;
+}
+
+HRESULT DirectDraw7Surface_RwD3D9::UpdateOverlayZOrder(DWORD, LPDIRECTDRAWSURFACE7)
+{
+	return E_NOTIMPL;
+}
+
+HRESULT DirectDraw7Surface_RwD3D9::GetDDInterface(LPVOID *)
+{
+	return E_NOTIMPL;
+}
+
+HRESULT DirectDraw7Surface_RwD3D9::PageLock(DWORD)
+{
+	return E_NOTIMPL;
+}
+
+HRESULT DirectDraw7Surface_RwD3D9::PageUnlock(DWORD)
+{
+	return E_NOTIMPL;
+}
+
+HRESULT DirectDraw7Surface_RwD3D9::SetSurfaceDesc(LPDDSURFACEDESC2, DWORD)
+{
+	return E_NOTIMPL;
+}
+
+HRESULT DirectDraw7Surface_RwD3D9::SetPrivateData(REFGUID, LPVOID, DWORD, DWORD)
+{
+	return E_NOTIMPL;
+}
+
+HRESULT DirectDraw7Surface_RwD3D9::GetPrivateData(REFGUID, LPVOID, LPDWORD)
+{
+	return E_NOTIMPL;
+}
+
+HRESULT DirectDraw7Surface_RwD3D9::FreePrivateData(REFGUID)
+{
+	return E_NOTIMPL;
+}
+
+HRESULT DirectDraw7Surface_RwD3D9::GetUniquenessValue(LPDWORD)
+{
+	return E_NOTIMPL;
+}
+
+HRESULT DirectDraw7Surface_RwD3D9::ChangeUniquenessValue(void)
+{
+	return E_NOTIMPL;
+}
+
+HRESULT DirectDraw7Surface_RwD3D9::SetPriority(DWORD)
+{
+	return E_NOTIMPL;
+}
+
+HRESULT DirectDraw7Surface_RwD3D9::GetPriority(LPDWORD)
+{
+	return E_NOTIMPL;
+}
+
+HRESULT DirectDraw7Surface_RwD3D9::SetLOD(DWORD)
+{
+	return E_NOTIMPL;
+}
+
+HRESULT DirectDraw7Surface_RwD3D9::GetLOD(LPDWORD)
+{
+	return E_NOTIMPL;
+}
+
+RwCamera    *RwCameraBeginUpdate(RwCamera * camera)
+{
+	return camera->beginUpdate(camera);
+}
+
+RwCamera    *RwCameraEndUpdate(RwCamera * camera)
+{
+	return camera->endUpdate(camera);
+}
+
+
+static void DrawOverlay( RwCamera* camera )
+{
+	if ( !drawOverlay ) return;
+	drawOverlay = false;
+
+	if ( RwCameraBeginUpdate( camera ) )
+	{
+		RwIm2DVertex vertices[5] = {};
+
+		size_t index = 0;
+		vertices[index].x = 640.0f;
+		vertices[index].y = 0.0f;
+		vertices[index].z = 0.0f;
+		vertices[index].rhw = 0.0f;
+		vertices[index].u = 0.0f;
+		vertices[index].v = 0.0f;
+		vertices[index].emissiveColor = 0xFF0000FF;
+		index++;
+
+		vertices[index].x = 0.0f;
+		vertices[index].y = 480.0f;
+		vertices[index].z = 0.0f;
+		vertices[index].rhw = 0.0f;
+		vertices[index].u = 0.0f;
+		vertices[index].v = 0.0f;
+		vertices[index].emissiveColor = 0xFF0000FF;
+		index++;
+
+		vertices[index].x = 0.0f;
+		vertices[index].y = 0.0f;
+		vertices[index].z = 0.0f;
+		vertices[index].rhw = 0.0f;
+		vertices[index].u = 0.0f;
+		vertices[index].v = 0.0f;
+		vertices[index].emissiveColor = 0xFF0000FF;
+		index++;
+
+		vertices[index].x = 0.0f;
+		vertices[index].y = 480.0f;
+		vertices[index].z = 0.0f;
+		vertices[index].rhw = 0.0f;
+		vertices[index].u = 0.0f;
+		vertices[index].v = 0.0f;
+		vertices[index].emissiveColor = 0xFF0000FF;
+		index++;
+
+		vertices[index].x = 640.0f;
+		vertices[index].y = 480.0f;
+		vertices[index].z = 0.0f;
+		vertices[index].rhw = 0.0f;
+		vertices[index].u = 0.0f;
+		vertices[index].v = 0.0f;
+		vertices[index].emissiveColor = 0xFF0000FF;
+		index++;
+
+		RwIm2DRenderPrimitive(rwPRIMTYPETRIFAN, vertices, index);
+
+		RwCameraEndUpdate( camera );
+	}
+}
+
+#include "MemoryMgr.h"
+
+WRAPPER RwRaster    *RwRasterShowRaster(RwRaster * raster, void *dev, RwUInt32 flags) { EAXJMP(0x75E640); }
+
+RwCamera *
+RwCameraShowRaster(RwCamera *camera, void *dev, RwUInt32 flags)
+{
+	if (RwRasterShowRaster(camera->frameBuffer, dev, flags))
+	{
+		return camera;
+	}
+
+	/* Device error */
+	return NULL;
+}
+
+RwCamera *RwCameraShowRaster_DrawOverlay(RwCamera * camera, void *pDev, RwUInt32 flags)
+{
+	DrawOverlay( camera );
+	return RwCameraShowRaster( camera, pDev, flags );
+}
