@@ -58,6 +58,10 @@
       <EnableEnhancedInstructionSet>NoExtensions</EnableEnhancedInstructionSet>
       <FloatingPointModel>Fast</FloatingPointModel>
     </ClCompile>
+    <FxCompile>
+      <ShaderModel>2.0</ShaderModel>
+      <ObjectFileOutput>$(ProjectDir)%(Filename).cso</ObjectFileOutput>
+    </FxCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -76,6 +80,10 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
+    <FxCompile>
+      <ShaderModel>2.0</ShaderModel>
+      <ObjectFileOutput>$(ProjectDir)%(Filename).cso</ObjectFileOutput>
+    </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="DirectDraw7Surface_RwD3D9.h" />
@@ -83,6 +91,7 @@
     <ClInclude Include="DirectDraw7Surface_RwD3D9RT.h" />
     <ClInclude Include="DirectDraw7_RwD3D9.h" />
     <ClInclude Include="MemoryMgr.h" />
+    <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DirectDraw7Surface_RwD3D9.cpp" />
@@ -91,6 +100,15 @@
     <ClCompile Include="OverlayRenderQueue.cpp" />
     <ClCompile Include="RW.cpp" />
     <ClCompile Include="SilentPatchGF.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="yuy2torgb.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
+    </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Shaders.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

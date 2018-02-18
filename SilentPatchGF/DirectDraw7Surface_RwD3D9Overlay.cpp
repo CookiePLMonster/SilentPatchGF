@@ -45,8 +45,8 @@ HRESULT DirectDraw7Surface_RwD3D9Overlay::UpdateOverlay(LPRECT lpSrcRect, LPDIRE
 
 DirectDraw7Surface_RwD3D9Overlay::DirectDraw7Surface_RwD3D9Overlay(int32_t width, int32_t height)
 {
-	m_raster = RwRasterCreate( width, height, 0, rwRASTERFORMAT4444|rwRASTERTYPETEXTURE );
-	//m_raster = RwD3D9RasterCreate
+	m_raster = RwRasterCreate( width, height, 0, rwRASTERFORMAT8888|rwRASTERTYPETEXTURE );
+	//m_raster = RwD3D9RasterCreate( width, height, D3DFMT_A8L8, rwRASTERTYPETEXTURE );
 
 	auto* vertices = m_verts;
 

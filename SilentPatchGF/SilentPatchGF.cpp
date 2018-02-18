@@ -12,6 +12,8 @@
 
 #include <rwcore.h>
 
+HINSTANCE hDLLModule;
+
 extern RwCamera    *RwCameraShowRaster_DrawOverlay(RwCamera * camera, void *pDev, RwUInt32 flags);
 
 HRESULT WINAPI DirectDrawRwD3D9Create( GUID *lpGUID, LPVOID *lplpDD, REFIID iid, IUnknown *pUnkOuter )
@@ -31,6 +33,8 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD reason, LPVOID lpReserved)
 	{
 	case DLL_PROCESS_ATTACH:
 		{
+			hDLLModule = hModule;
+
 			ScopedUnprotect::Section Section( GetModuleHandle( nullptr ), ".text");
 			ScopedUnprotect::Section Section2( GetModuleHandle( nullptr ), ".rdata");
 			strcpy_s( (char*)0xA8F4D8, 16, "log.log" );

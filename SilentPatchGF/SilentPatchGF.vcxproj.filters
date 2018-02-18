@@ -19,6 +19,9 @@
     <Filter Include="Source Files\wrappers">
       <UniqueIdentifier>{357e8094-3dd2-4c37-a121-cf8fcd7c095d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Shaders">
+      <UniqueIdentifier>{4cca3453-5aed-4e01-8da1-0319f3d19840}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MemoryMgr.h">
@@ -35,6 +38,9 @@
     </ClInclude>
     <ClInclude Include="DirectDraw7Surface_RwD3D9RT.h">
       <Filter>Header Files\wrappers</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -56,5 +62,15 @@
     <ClCompile Include="RW.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="yuy2torgb.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Shaders.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
   </ItemGroup>
 </Project>

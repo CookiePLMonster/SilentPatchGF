@@ -1,0 +1,1 @@
+#define IDR_YUY2SHADER			101
