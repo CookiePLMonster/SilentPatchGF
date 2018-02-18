@@ -24,6 +24,7 @@ void DD7_RwD3D9OverlayRenderQueue::RemoveFromQueue(void* raster)
 	if ( it != m_queue.end() )
 	{
 		m_queue.erase( it );
+		RemoveFromQueue( raster );
 	}
 }
 

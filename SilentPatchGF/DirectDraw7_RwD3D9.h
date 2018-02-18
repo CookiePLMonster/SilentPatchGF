@@ -8,6 +8,7 @@ class DD7_RwD3D9OverlayRenderQueue
 public:
 	void PushToQueue( void* shader, void* raster, const RECT& srcRect, const RECT& destRect )
 	{
+		RemoveFromQueue( raster ); // First remove the overlay if it's already pushed
 		m_queue.emplace_back( shader, raster, srcRect, destRect );
 	}
 
