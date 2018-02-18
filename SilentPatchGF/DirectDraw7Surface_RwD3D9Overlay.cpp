@@ -75,7 +75,7 @@ DirectDraw7Surface_RwD3D9Overlay::DirectDraw7Surface_RwD3D9Overlay(int32_t width
 	vertices[index].y = 0.0f;
 	vertices[index].z = 0.0f;
 	vertices[index].rhw = 0.0f;
-	vertices[index].u = 1.0f;
+	vertices[index].u = 640.0f;
 	vertices[index].v = 0.0f;
 	vertices[index].emissiveColor = 0xFFFFFFFF;
 	index++;
@@ -84,7 +84,7 @@ DirectDraw7Surface_RwD3D9Overlay::DirectDraw7Surface_RwD3D9Overlay(int32_t width
 	vertices[index].y = 480.0f - 0.5f;
 	vertices[index].z = 0.0f;
 	vertices[index].rhw = 0.0f;
-	vertices[index].u = 1.0f;
+	vertices[index].u = 640.0f;
 	vertices[index].v = 1.0f;
 	vertices[index].emissiveColor = 0xFFFFFFFF;
 	index++;
