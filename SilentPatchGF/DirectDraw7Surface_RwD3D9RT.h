@@ -9,9 +9,9 @@ public:
 	{
 	}
 
-	void AddOverlayToQueue( void* raster, void* verts )
+	void AddOverlayToQueue( void* raster, const RECT& srcRect, const RECT& destRect )
 	{
-		m_overlayRenderQueue->PushToQueue( raster, verts );
+		m_overlayRenderQueue->PushToQueue( raster, srcRect, destRect );
 	}
 
 private:

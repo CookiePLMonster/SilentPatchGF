@@ -45,12 +45,49 @@ void DD7_RwD3D9OverlayRenderQueue::Render( void* camera )
 
 		for ( const auto& entry : m_queue )
 		{
-			// TODO: Stop hardcoding this
-			const float psData[4] = { 1.0f/640.0f };
+			RwIm2DVertex	vertices[4];
+
+			size_t index = 0;
+			vertices[index].x = entry.destRect.left - 0.5f;
+			vertices[index].y = entry.destRect.top - 0.5f;
+			vertices[index].z = 0.0f;
+			vertices[index].rhw = 0.0f;
+			vertices[index].u = 0.0f;
+			vertices[index].v = 0.0f;
+			vertices[index].emissiveColor = 0xFFFFFFFF;
+			index++;
+
+			vertices[index].x = entry.destRect.left - 0.5f;
+			vertices[index].y = entry.destRect.bottom - 0.5f;
+			vertices[index].z = 0.0f;
+			vertices[index].rhw = 0.0f;
+			vertices[index].u = 0.0f;
+			vertices[index].v = 1.0f;
+			vertices[index].emissiveColor = 0xFFFFFFFF;
+			index++;
+
+			vertices[index].x = entry.destRect.right - 0.5f;
+			vertices[index].y = entry.destRect.top - 0.5f;
+			vertices[index].z = 0.0f;
+			vertices[index].rhw = 0.0f;
+			vertices[index].u = entry.srcRect.right;
+			vertices[index].v = 0.0f;
+			vertices[index].emissiveColor = 0xFFFFFFFF;
+			index++;
+
+			vertices[index].x = entry.destRect.right - 0.5f;
+			vertices[index].y = entry.destRect.bottom - 0.5f;
+			vertices[index].z = 0.0f;
+			vertices[index].rhw = 0.0f;
+			vertices[index].u = entry.srcRect.right;
+			vertices[index].v = 1.0f;
+			vertices[index].emissiveColor = 0xFFFFFFFF;
+
+			const float psData[4] = { 1.0f/entry.srcRect.right };
 
 			_rwD3D9SetPixelShaderConstant( 0, psData, 1 );
-			RwRenderStateSet( rwRENDERSTATETEXTURERASTER, entry.first );
-			RwIm2DRenderPrimitive(rwPRIMTYPETRISTRIP, static_cast<RwIm2DVertex*>(entry.second), 4);
+			RwRenderStateSet( rwRENDERSTATETEXTURERASTER, entry.raster );
+			RwIm2DRenderPrimitive(rwPRIMTYPETRISTRIP, vertices, sizeof(vertices) / sizeof(vertices[0]));
 		}
 
 		im2dShaderOverride = nullptr;

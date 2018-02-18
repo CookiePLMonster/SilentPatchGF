@@ -7,15 +7,27 @@
 class DD7_RwD3D9OverlayRenderQueue
 {
 public:
-	void PushToQueue( void* raster, void* verts )
+	void PushToQueue( void* raster, const RECT& srcRect, const RECT& destRect )
 	{
-		m_queue.emplace_back( raster, verts );
+		m_queue.emplace_back( raster, srcRect, destRect );
 	}
 
 	void Render( void* camera );
 
 private:
-	std::vector< std::pair<void*, void*> > m_queue;
+	struct RenderEntry
+	{
+		void* raster;
+		RECT srcRect;
+		RECT destRect;
+
+		RenderEntry( void* raster, const RECT& srcRect, const RECT& destRect )
+			: raster( raster ), srcRect( srcRect ), destRect( destRect )
+		{
+		}
+	};
+
+	std::vector< RenderEntry > m_queue;
 };
 
 class DirectDraw7_RwD3D9 final : public IDirectDraw7
