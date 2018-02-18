@@ -45,13 +45,33 @@ HRESULT DirectDraw7Surface_RwD3D9Overlay::UpdateOverlay(LPRECT lpSrcRect, LPDIRE
 
 DirectDraw7Surface_RwD3D9Overlay::DirectDraw7Surface_RwD3D9Overlay(int32_t width, int32_t height)
 {
-	m_raster = RwRasterCreate( width, height, 0, rwRASTERFORMAT8888|rwRASTERTYPETEXTURE );
+	m_raster = RwRasterCreate( width / 2, height, 0, rwRASTERFORMAT8888|rwRASTERTYPETEXTURE );
 	//m_raster = RwD3D9RasterCreate( width, height, D3DFMT_A8L8, rwRASTERTYPETEXTURE );
 
 	auto* vertices = m_verts;
 
+	// TODO: Arrange properly to fix alpha issues
 	size_t index = 0;
-	vertices[index].x = 640.0f;
+
+	vertices[index].x = 0.0f;
+	vertices[index].y = 0.0f;
+	vertices[index].z = 0.0f;
+	vertices[index].rhw = 0.0f;
+	vertices[index].u = 0.0f;
+	vertices[index].v = 0.0f;
+	vertices[index].emissiveColor = 0xFFFFFFFF;
+	index++;
+
+	vertices[index].x = 0.0f;
+	vertices[index].y = 480.0f - 0.5f;
+	vertices[index].z = 0.0f;
+	vertices[index].rhw = 0.0f;
+	vertices[index].u = 0.0f;
+	vertices[index].v = 1.0f;
+	vertices[index].emissiveColor = 0xFFFFFFFF;
+	index++;
+
+	vertices[index].x = 640.0f - 0.5f;
 	vertices[index].y = 0.0f;
 	vertices[index].z = 0.0f;
 	vertices[index].rhw = 0.0f;
@@ -60,35 +80,8 @@ DirectDraw7Surface_RwD3D9Overlay::DirectDraw7Surface_RwD3D9Overlay(int32_t width
 	vertices[index].emissiveColor = 0xFFFFFFFF;
 	index++;
 
-	vertices[index].x = 0.0f;
-	vertices[index].y = 480.0f;
-	vertices[index].z = 0.0f;
-	vertices[index].rhw = 0.0f;
-	vertices[index].u = 0.0f;
-	vertices[index].v = 1.0f;
-	vertices[index].emissiveColor = 0xFFFFFFFF;
-	index++;
-
-	vertices[index].x = 0.0f;
-	vertices[index].y = 0.0f;
-	vertices[index].z = 0.0f;
-	vertices[index].rhw = 0.0f;
-	vertices[index].u = 0.0f;
-	vertices[index].v = 0.0f;
-	vertices[index].emissiveColor = 0xFFFFFFFF;
-	index++;
-
-	vertices[index].x = 0.0f;
-	vertices[index].y = 480.0f;
-	vertices[index].z = 0.0f;
-	vertices[index].rhw = 0.0f;
-	vertices[index].u = 0.0f;
-	vertices[index].v = 1.0f;
-	vertices[index].emissiveColor = 0xFFFFFFFF;
-	index++;
-
-	vertices[index].x = 640.0f;
-	vertices[index].y = 480.0f;
+	vertices[index].x = 640.0f - 0.5f;
+	vertices[index].y = 480.0f - 0.5f;
 	vertices[index].z = 0.0f;
 	vertices[index].rhw = 0.0f;
 	vertices[index].u = 1.0f;

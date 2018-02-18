@@ -42,8 +42,13 @@ void DD7_RwD3D9OverlayRenderQueue::Render( void* camera )
 
 		for ( const auto& entry : m_queue )
 		{
+			// TODO: Stop hardcoding this
+			const float psData[4] = { 320.0f*2.0f, /*640.0f*/ };
+
+			_rwD3D9SetPixelShaderConstant( 0, psData, 1 );
+			//RwRenderStateSet( rwRENDERSTATETEXTUREFILTER, (void*)rwFILTERNEAREST );
 			RwRenderStateSet( rwRENDERSTATETEXTURERASTER, entry.first );
-			RwIm2DRenderPrimitive(rwPRIMTYPETRIFAN, static_cast<RwIm2DVertex*>(entry.second), 5);
+			RwIm2DRenderPrimitive(rwPRIMTYPETRISTRIP, static_cast<RwIm2DVertex*>(entry.second), 4);
 		}
 
 		im2dShaderOverride = nullptr;

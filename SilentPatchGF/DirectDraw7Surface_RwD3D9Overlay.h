@@ -17,6 +17,6 @@ public:
 private:
 	RwRaster*		m_raster = nullptr;
 
-	RwIm2DVertex	m_verts[5];
+	RwIm2DVertex	m_verts[4];
 };
 
