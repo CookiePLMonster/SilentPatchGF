@@ -1,13 +1,12 @@
 #include "DirectDraw7_RwD3D9.h"
 
-#include "resource.h"
+#include <algorithm>
 #include <rwcore.h>
+#include <d3d9.h>
 #include "MemoryMgr.h"
 
 #define RwEngineInstance (*rwengine)
 extern void** rwengine;
-
-extern HINSTANCE hDLLModule;
 
 void (*org_rwD3D9SetPixelShader)(void* shader);
 
@@ -17,29 +16,24 @@ void _rwD3D9SetPixelShader_Override( void* )
 	org_rwD3D9SetPixelShader( im2dShaderOverride );
 }
 
+void DD7_RwD3D9OverlayRenderQueue::RemoveFromQueue(void* raster)
+{
+	auto it = std::find_if( m_queue.begin(), m_queue.end(), [=] (const auto& entry) {
+		return entry.raster == raster;
+	});
+	if ( it != m_queue.end() )
+	{
+		m_queue.erase( it );
+	}
+}
+
 void DD7_RwD3D9OverlayRenderQueue::Render( void* camera )
 {
 	if ( m_queue.empty() ) return;
 
-	// TODO: Move elsewhere (probably to DirectDraw7_RwD3D9 constructor)
-	static void* yuy2Shader = nullptr;
-	static bool shaderCreated = false;
-	if ( !shaderCreated )
-	{
-		shaderCreated = true;
-
-		// TODO: This should be a bit different
-		HRSRC		resource = FindResource(hDLLModule, MAKEINTRESOURCE(IDR_YUY2SHADER), RT_RCDATA);
-		RwUInt32*	shader = static_cast<RwUInt32*>(LockResource( LoadResource(hDLLModule, resource) ));
-
-		RwD3D9CreatePixelShader(shader, reinterpret_cast<void**>(&yuy2Shader));
-	}
-
 	RwCamera* rwCamera =  static_cast<RwCamera*>(camera);
 	if ( RwCameraBeginUpdate( rwCamera ) )
 	{
-		im2dShaderOverride = yuy2Shader;
-
 		RwD3D9SetSamplerState( 0, D3DSAMP_MINFILTER, D3DTEXF_POINT );
 		RwD3D9SetSamplerState( 0, D3DSAMP_MAGFILTER, D3DTEXF_POINT );
 
@@ -70,7 +64,7 @@ void DD7_RwD3D9OverlayRenderQueue::Render( void* camera )
 			vertices[index].y = entry.destRect.top - 0.5f;
 			vertices[index].z = 0.0f;
 			vertices[index].rhw = 0.0f;
-			vertices[index].u = entry.srcRect.right;
+			vertices[index].u = static_cast<RwReal>(entry.srcRect.right);
 			vertices[index].v = 0.0f;
 			vertices[index].emissiveColor = 0xFFFFFFFF;
 			index++;
@@ -79,11 +73,13 @@ void DD7_RwD3D9OverlayRenderQueue::Render( void* camera )
 			vertices[index].y = entry.destRect.bottom - 0.5f;
 			vertices[index].z = 0.0f;
 			vertices[index].rhw = 0.0f;
-			vertices[index].u = entry.srcRect.right;
+			vertices[index].u = static_cast<RwReal>(entry.srcRect.right);
 			vertices[index].v = 1.0f;
 			vertices[index].emissiveColor = 0xFFFFFFFF;
 
 			const float psData[4] = { 1.0f/entry.srcRect.right };
+
+			im2dShaderOverride = entry.shader;
 
 			_rwD3D9SetPixelShaderConstant( 0, psData, 1 );
 			RwRenderStateSet( rwRENDERSTATETEXTURERASTER, entry.raster );
@@ -96,14 +92,6 @@ void DD7_RwD3D9OverlayRenderQueue::Render( void* camera )
 		m_queue.clear();
 	}
 }
-
-
-
-/*		RwIm2DRenderPrimitive(rwPRIMTYPETRIFAN, vertices, index);
-
-		RwCameraEndUpdate( camera );
-	}
-}*/
 
 RwCamera *RwCameraShowRaster_DrawOverlay(RwCamera * camera, void *pDev, RwUInt32 flags)
 {

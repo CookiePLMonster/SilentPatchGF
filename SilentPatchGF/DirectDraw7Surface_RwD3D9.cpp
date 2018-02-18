@@ -13,12 +13,17 @@ HRESULT DirectDraw7Surface_RwD3D9::QueryInterface(REFIID riid, LPVOID * ppvObj)
 
 ULONG DirectDraw7Surface_RwD3D9::AddRef(void)
 {
-	return 0;
+	return InterlockedIncrement( &m_refCount );
 }
 
 ULONG DirectDraw7Surface_RwD3D9::Release(void)
 {
-	return 0;
+	LONG ref = InterlockedDecrement( &m_refCount );
+	if ( ref == 0 )
+	{
+		delete this;
+	}
+	return ref;
 }
 
 HRESULT DirectDraw7Surface_RwD3D9::AddAttachedSurface(LPDIRECTDRAWSURFACE7)

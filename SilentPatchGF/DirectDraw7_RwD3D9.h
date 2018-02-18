@@ -1,28 +1,30 @@
 #pragma once
 
 #include <ddraw.h>
-#include <d3d9.h>
 #include <vector>
 
 class DD7_RwD3D9OverlayRenderQueue
 {
 public:
-	void PushToQueue( void* raster, const RECT& srcRect, const RECT& destRect )
+	void PushToQueue( void* shader, void* raster, const RECT& srcRect, const RECT& destRect )
 	{
-		m_queue.emplace_back( raster, srcRect, destRect );
+		m_queue.emplace_back( shader, raster, srcRect, destRect );
 	}
+
+	void RemoveFromQueue( void* raster );
 
 	void Render( void* camera );
 
 private:
 	struct RenderEntry
 	{
+		void* shader;
 		void* raster;
 		RECT srcRect;
 		RECT destRect;
 
-		RenderEntry( void* raster, const RECT& srcRect, const RECT& destRect )
-			: raster( raster ), srcRect( srcRect ), destRect( destRect )
+		RenderEntry( void* shader, void* raster, const RECT& srcRect, const RECT& destRect )
+			: shader(shader), raster( raster ), srcRect( srcRect ), destRect( destRect )
 		{
 		}
 	};
@@ -67,17 +69,18 @@ public:
 
 	static DD7_RwD3D9OverlayRenderQueue& OverlayRenderQueue() { return ms_overlayRenderQueue; }
 
-	DirectDraw7_RwD3D9();
+	DirectDraw7_RwD3D9()
+	{
+		CreateYUY2Shader();
+	}
+
+	~DirectDraw7_RwD3D9();
 
 private:
-	const D3DDISPLAYMODE& CollectDisplayMode();
+	void CreateYUY2Shader();
 
-private:
 	LONG m_refCount = 1;
-	IDirect3D9* m_d3d = nullptr;
-
-	bool m_adapterDisplayModeGathered = false;
-	D3DDISPLAYMODE m_adapterDisplayMode;
+	void* m_yuy2Shader = nullptr;
 
 	static DD7_RwD3D9OverlayRenderQueue ms_overlayRenderQueue;
 };

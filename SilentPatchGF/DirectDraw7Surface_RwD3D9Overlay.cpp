@@ -34,12 +34,14 @@ HRESULT DirectDraw7Surface_RwD3D9Overlay::UpdateOverlay(LPRECT lpSrcRect, LPDIRE
 	if ( (dwFlags & DDOVER_SHOW) != 0 )
 	{
 		DirectDraw7Surface_RwD3D9RT* rt = static_cast<DirectDraw7Surface_RwD3D9RT*>(lpDDDestSurface);
-		rt->AddOverlayToQueue( m_raster, *lpSrcRect, *lpDestRect );
+		rt->AddOverlayToQueue( m_shader, m_raster, *lpSrcRect, *lpDestRect );
 		return DD_OK;
 	}
 	else if ( (dwFlags & DDOVER_HIDE) != 0 )
 	{
-		// Do nothing
+		// If we've already queued for overlay for render, remove it
+		DirectDraw7Surface_RwD3D9RT* rt = static_cast<DirectDraw7Surface_RwD3D9RT*>(lpDDDestSurface);
+		rt->RemoveOverlayFromQueue( m_raster );
 		return DD_OK;
 	}
 
@@ -47,12 +49,16 @@ HRESULT DirectDraw7Surface_RwD3D9Overlay::UpdateOverlay(LPRECT lpSrcRect, LPDIRE
 	return E_NOTIMPL;
 }
 
-DirectDraw7Surface_RwD3D9Overlay::DirectDraw7Surface_RwD3D9Overlay(int32_t width, int32_t height)
+DirectDraw7Surface_RwD3D9Overlay::DirectDraw7Surface_RwD3D9Overlay(void* shader, int32_t width, int32_t height)
+	: m_shader(shader)
 {
 	m_raster = RwRasterCreate( width / 2, height, 0, rwRASTERFORMAT8888|rwRASTERTYPETEXTURE );
 }
 
 DirectDraw7Surface_RwD3D9Overlay::~DirectDraw7Surface_RwD3D9Overlay()
 {
-	// TODO: Raster destroy
+	if ( m_raster != nullptr )
+	{
+		RwRasterDestroy( m_raster );
+	}
 }

@@ -9,9 +9,14 @@ public:
 	{
 	}
 
-	void AddOverlayToQueue( void* raster, const RECT& srcRect, const RECT& destRect )
+	void AddOverlayToQueue( void* shader, void* raster, const RECT& srcRect, const RECT& destRect )
 	{
-		m_overlayRenderQueue->PushToQueue( raster, srcRect, destRect );
+		m_overlayRenderQueue->PushToQueue( shader, raster, srcRect, destRect );
+	}
+
+	void RemoveOverlayFromQueue( void* raster )
+	{
+		m_overlayRenderQueue->RemoveFromQueue( raster );
 	}
 
 private:

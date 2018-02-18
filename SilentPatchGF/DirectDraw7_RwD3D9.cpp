@@ -3,32 +3,9 @@
 #include "DirectDraw7Surface_RwD3D9RT.h"
 
 #include <cassert>
-
-#pragma comment(lib, "d3d9.lib")
+#include <d3d9.h>
 
 DD7_RwD3D9OverlayRenderQueue DirectDraw7_RwD3D9::ms_overlayRenderQueue;
-
-DirectDraw7_RwD3D9::DirectDraw7_RwD3D9()
-{
-	m_d3d = Direct3DCreate9(D3D_SDK_VERSION);
-	assert( m_d3d != nullptr );
-
-	//D3DPRESENT_PARAMETERS parameters;
-
-
-	//m_direct3dDevice = m_direct3d->CreateDevice( D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, GetActiveWindow(), D3DCREATE_HARDWARE_VERTEXPROCESSING|D3DCREATE_FPU_PRESERVE )
-}
-
-const D3DDISPLAYMODE& DirectDraw7_RwD3D9::CollectDisplayMode()
-{
-	if ( !m_adapterDisplayModeGathered )
-	{
-		m_adapterDisplayModeGathered = true;
-		m_d3d->GetAdapterDisplayMode( D3DADAPTER_DEFAULT, &m_adapterDisplayMode );
-	}
-	return m_adapterDisplayMode;
-}
-
 
 HRESULT DirectDraw7_RwD3D9::QueryInterface(REFIID riid, LPVOID * ppvObj)
 {
@@ -37,12 +14,17 @@ HRESULT DirectDraw7_RwD3D9::QueryInterface(REFIID riid, LPVOID * ppvObj)
 
 ULONG DirectDraw7_RwD3D9::AddRef(void)
 {
-	return 0;
+	return InterlockedIncrement( &m_refCount );
 }
 
 ULONG DirectDraw7_RwD3D9::Release(void)
 {
-	return 0;
+	LONG ref = InterlockedDecrement( &m_refCount );
+	if ( ref == 0 )
+	{
+		delete this;
+	}
+	return ref;
 }
 
 HRESULT DirectDraw7_RwD3D9::Compact(void)
@@ -76,7 +58,7 @@ HRESULT DirectDraw7_RwD3D9::CreateSurface(LPDDSURFACEDESC2 lpDDSurfaceDesc2, LPD
 	else if ( (lpDDSurfaceDesc2->ddsCaps.dwCaps & DDSCAPS_OVERLAY) != 0 ) // If it's not an overlay, something went wrong
 	{
 		// For overlay surface, we create a primitive to be rendered
-		IDirectDrawSurface7* surface = new DirectDraw7Surface_RwD3D9Overlay( lpDDSurfaceDesc2->dwWidth, lpDDSurfaceDesc2->dwHeight );
+		IDirectDrawSurface7* surface = new DirectDraw7Surface_RwD3D9Overlay( m_yuy2Shader, lpDDSurfaceDesc2->dwWidth, lpDDSurfaceDesc2->dwHeight );
 		*lplpDDSurface = surface;
 	}
 	else
@@ -117,12 +99,14 @@ HRESULT DirectDraw7_RwD3D9::GetDisplayMode(LPDDSURFACEDESC2 lpDDSurfaceDesc2)
 {
 	if ( lpDDSurfaceDesc2 == nullptr || lpDDSurfaceDesc2->dwSize != sizeof(*lpDDSurfaceDesc2) ) return DDERR_INVALIDPARAMS;
 
-	const D3DDISPLAYMODE& displayMode = CollectDisplayMode();
+	RwVideoMode modeinfo;
+	RwEngineGetVideoModeInfo( &modeinfo, RwEngineGetCurrentVideoMode() );
 
-	lpDDSurfaceDesc2->dwWidth = displayMode.Width;
-	lpDDSurfaceDesc2->dwHeight = displayMode.Height;
-	lpDDSurfaceDesc2->dwRefreshRate = displayMode.RefreshRate;
-	lpDDSurfaceDesc2->dwFlags = DDSD_WIDTH|DDSD_HEIGHT|DDSD_REFRESHRATE;
+	lpDDSurfaceDesc2->dwWidth = modeinfo.width;
+	lpDDSurfaceDesc2->dwHeight = modeinfo.height;
+	lpDDSurfaceDesc2->dwDepth = modeinfo.depth;
+	lpDDSurfaceDesc2->dwRefreshRate = modeinfo.refRate;
+	lpDDSurfaceDesc2->dwFlags = DDSD_WIDTH|DDSD_HEIGHT|DDSD_DEPTH|DDSD_REFRESHRATE;
 
 	return DD_OK;
 }
@@ -214,4 +198,24 @@ HRESULT DirectDraw7_RwD3D9::StartModeTest(LPSIZE, DWORD, DWORD)
 HRESULT DirectDraw7_RwD3D9::EvaluateMode(DWORD, DWORD *)
 {
 	return E_NOTIMPL;
+}
+
+DirectDraw7_RwD3D9::~DirectDraw7_RwD3D9()
+{
+	if ( m_yuy2Shader != nullptr )
+	{
+		RwD3D9DeletePixelShader( m_yuy2Shader );
+	}
+}
+
+#include "resource.h"
+
+extern HINSTANCE hDLLModule;
+void DirectDraw7_RwD3D9::CreateYUY2Shader()
+{
+	// TODO: This should be a bit different
+	HRSRC		resource = FindResource(hDLLModule, MAKEINTRESOURCE(IDR_YUY2SHADER), RT_RCDATA);
+	RwUInt32*	shader = static_cast<RwUInt32*>(LockResource( LoadResource(hDLLModule, resource) ));
+
+	RwD3D9CreatePixelShader(shader, reinterpret_cast<void**>(&m_yuy2Shader));
 }

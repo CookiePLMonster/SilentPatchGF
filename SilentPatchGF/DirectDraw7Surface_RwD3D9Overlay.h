@@ -11,10 +11,11 @@ public:
 	virtual HRESULT WINAPI Unlock(LPRECT) override;
 	virtual HRESULT WINAPI UpdateOverlay(LPRECT, LPDIRECTDRAWSURFACE7, LPRECT, DWORD, LPDDOVERLAYFX) override;
 
-	DirectDraw7Surface_RwD3D9Overlay( int32_t width, int32_t height );
+	DirectDraw7Surface_RwD3D9Overlay( void* shader, int32_t width, int32_t height );
 	virtual ~DirectDraw7Surface_RwD3D9Overlay() override;
 
 private:
+	void*			m_shader = nullptr;
 	RwRaster*		m_raster = nullptr;
 };
 
