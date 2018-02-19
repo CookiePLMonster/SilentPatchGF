@@ -40,10 +40,13 @@ void __stdcall InjectDelayedPatches( int val )
 	GetModuleFileNameW(hDLLModule, wcModulePath, _countof(wcModulePath) - 3); // Minus max required space for extension
 	PathRenameExtensionW(wcModulePath, L".ini");
 
-	if ( int INIoption = GetPrivateProfileIntW(L"SilentPatch", L"FPSLimit", -1, wcModulePath); INIoption != -1 )
+	if ( const int INIoption = GetPrivateProfileIntW(L"SilentPatch", L"FPSLimit", -1, wcModulePath); INIoption != -1 )
 	{
 		Memory::Patch<float>(0x7CF398 + 6, INIoption > 0 ? 1000.0f/INIoption : 0.0f );
 	}
+
+	bool keepAR = GetPrivateProfileIntW(L"SilentPatch", L"KeepFMVAspectRatio", FALSE, wcModulePath) != FALSE;
+	DirectDraw7_RwD3D9::OverlayRenderQueue().SetKeepAR( keepAR );
 }
 
 BOOL APIENTRY DllMain(HMODULE hModule, DWORD reason, LPVOID lpReserved)

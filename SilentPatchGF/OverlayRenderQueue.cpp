@@ -35,13 +35,15 @@ void DD7_RwD3D9OverlayRenderQueue::Render( void* camera )
 	RwCamera* rwCamera =  static_cast<RwCamera*>(camera);
 	if ( RwCameraBeginUpdate( rwCamera ) )
 	{
-		RwUInt32 minFilter = D3DTEXF_NONE, magFilter = D3DTEXF_NONE;
+		RwUInt32 minFilter = D3DTEXF_NONE, magFilter = D3DTEXF_NONE, mipFilter = D3DTEXF_NONE;
 
 		RwD3D9GetSamplerState( 0, D3DSAMP_MINFILTER, &minFilter );
 		RwD3D9GetSamplerState( 0, D3DSAMP_MAGFILTER, &magFilter );
+		RwD3D9GetSamplerState( 0, D3DSAMP_MIPFILTER, &mipFilter );
 
 		RwD3D9SetSamplerState( 0, D3DSAMP_MINFILTER, D3DTEXF_POINT );
 		RwD3D9SetSamplerState( 0, D3DSAMP_MAGFILTER, D3DTEXF_POINT );
+		RwD3D9SetSamplerState( 0, D3DSAMP_MIPFILTER, D3DTEXF_NONE );
 
 		for ( const auto& entry : m_queue )
 		{
@@ -94,12 +96,40 @@ void DD7_RwD3D9OverlayRenderQueue::Render( void* camera )
 
 		RwD3D9SetSamplerState( 0, D3DSAMP_MINFILTER, minFilter );
 		RwD3D9SetSamplerState( 0, D3DSAMP_MAGFILTER, magFilter );
+		RwD3D9SetSamplerState( 0, D3DSAMP_MIPFILTER, mipFilter );
 
 		im2dShaderOverride = nullptr;
 		RwCameraEndUpdate( rwCamera );
 
 		m_queue.clear();
 	}
+}
+
+RECT DD7_RwD3D9OverlayRenderQueue::CalcRectForAR(const RECT & srcRect, const RECT & destRect) const
+{
+	RECT rect = destRect;
+	if ( m_keepAspectRatio )
+	{
+		const LONG srcWidth = srcRect.right - srcRect.left;
+		const LONG srcHeight = srcRect.bottom - srcRect.top;
+		const double srcAR = static_cast<double>(srcWidth) / srcHeight;
+
+		const LONG destWidth = destRect.right - destRect.left;
+		const LONG destHeight = destRect.bottom - destRect.top;
+		const double destAR = static_cast<double>(destWidth) / destHeight;
+		if ( srcAR > destAR )
+		{
+			// Letterbox
+		}
+		else if ( srcAR < destAR )
+		{
+			// Pillarbox
+			const LONG outRectWidth = static_cast<LONG>(destHeight * srcAR);
+			rect.left = ( destWidth - outRectWidth ) / 2;
+			rect.right = ( destWidth + outRectWidth ) / 2;
+		}
+	}
+	return rect;
 }
 
 RwCamera *RwCameraShowRaster_DrawOverlay(RwCamera * camera, void *pDev, RwUInt32 flags)
