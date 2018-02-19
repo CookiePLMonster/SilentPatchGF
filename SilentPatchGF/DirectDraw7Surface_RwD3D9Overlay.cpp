@@ -17,15 +17,23 @@ HRESULT DirectDraw7Surface_RwD3D9Overlay::Lock(LPRECT lpDestRect, LPDDSURFACEDES
 	if ( lpDestRect != nullptr || lpDDSurfaceDesc == nullptr ) return DDERR_INVALIDPARAMS;
 
 	uint8_t* pixels = RwRasterLock( m_raster, 0, DD7LockModeToRWLockMode( dwFlags ) );
-	lpDDSurfaceDesc->lpSurface = pixels;
+	if ( pixels != nullptr )
+	{
+		m_rasterPixelsPtr = pixels;
+		lpDDSurfaceDesc->lpSurface = m_rasterYUY2Ptr = pixels + ((RwRasterGetStride( m_raster ) * RwRasterGetHeight( m_raster )) / 2);
+		m_rasterEndPtr = pixels + ( RwRasterGetStride( m_raster ) * RwRasterGetHeight( m_raster ) );
+		return DD_OK;
+	}
 
-	return pixels != nullptr ? DD_OK : DDERR_OUTOFMEMORY;
+	lpDDSurfaceDesc->lpSurface = nullptr;
+	return DDERR_OUTOFMEMORY;
 }
 
 HRESULT DirectDraw7Surface_RwD3D9Overlay::Unlock(LPRECT lpRect)
 {
 	if ( lpRect != nullptr ) return DDERR_INVALIDRECT;
 
+	DecodeYUY2ToYUV();
 	return RwRasterUnlock( m_raster ) != nullptr ? DD_OK : DDERR_NOTLOCKED;
 }
 
@@ -52,7 +60,7 @@ HRESULT DirectDraw7Surface_RwD3D9Overlay::UpdateOverlay(LPRECT lpSrcRect, LPDIRE
 DirectDraw7Surface_RwD3D9Overlay::DirectDraw7Surface_RwD3D9Overlay(void* shader, int32_t width, int32_t height)
 	: m_shader(shader)
 {
-	m_raster = RwRasterCreate( width / 2, height, 0, rwRASTERFORMAT8888|rwRASTERTYPETEXTURE );
+	m_raster = RwRasterCreate( width, height, 0, rwRASTERFORMAT8888|rwRASTERTYPETEXTURE );
 }
 
 DirectDraw7Surface_RwD3D9Overlay::~DirectDraw7Surface_RwD3D9Overlay()
@@ -60,5 +68,20 @@ DirectDraw7Surface_RwD3D9Overlay::~DirectDraw7Surface_RwD3D9Overlay()
 	if ( m_raster != nullptr )
 	{
 		RwRasterDestroy( m_raster );
+	}
+}
+
+void DirectDraw7Surface_RwD3D9Overlay::DecodeYUY2ToYUV()
+{
+	const uint32_t* src = reinterpret_cast<uint32_t*>(m_rasterYUY2Ptr);
+	const uint32_t* end = reinterpret_cast<uint32_t*>(m_rasterEndPtr);
+
+	uint32_t* dest = reinterpret_cast<uint32_t*>(m_rasterPixelsPtr);
+
+	while ( src != end )
+	{
+		const uint32_t yuy = *src++;
+		*dest++ = ((yuy & 0xFF) << 16) | (yuy & 0xFF00) | ((yuy & 0xFF000000) >> 24);
+		*dest++ = (yuy & 0xFFFF00) | ((yuy & 0xFF000000) >> 24);
 	}
 }

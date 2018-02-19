@@ -15,7 +15,12 @@ public:
 	virtual ~DirectDraw7Surface_RwD3D9Overlay() override;
 
 private:
+	void			DecodeYUY2ToYUV();
+
 	void*			m_shader = nullptr;
 	RwRaster*		m_raster = nullptr;
+	uint8_t*		m_rasterPixelsPtr = nullptr;
+	uint8_t*		m_rasterYUY2Ptr = nullptr;
+	uint8_t*		m_rasterEndPtr = nullptr;
 };
 

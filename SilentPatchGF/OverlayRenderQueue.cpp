@@ -35,16 +35,6 @@ void DD7_RwD3D9OverlayRenderQueue::Render( void* camera )
 	RwCamera* rwCamera =  static_cast<RwCamera*>(camera);
 	if ( RwCameraBeginUpdate( rwCamera ) )
 	{
-		RwUInt32 minFilter = D3DTEXF_NONE, magFilter = D3DTEXF_NONE, mipFilter = D3DTEXF_NONE;
-
-		RwD3D9GetSamplerState( 0, D3DSAMP_MINFILTER, &minFilter );
-		RwD3D9GetSamplerState( 0, D3DSAMP_MAGFILTER, &magFilter );
-		RwD3D9GetSamplerState( 0, D3DSAMP_MIPFILTER, &mipFilter );
-
-		RwD3D9SetSamplerState( 0, D3DSAMP_MINFILTER, D3DTEXF_POINT );
-		RwD3D9SetSamplerState( 0, D3DSAMP_MAGFILTER, D3DTEXF_POINT );
-		RwD3D9SetSamplerState( 0, D3DSAMP_MIPFILTER, D3DTEXF_NONE );
-
 		for ( const auto& entry : m_queue )
 		{
 			RwIm2DVertex	vertices[4];
@@ -72,7 +62,7 @@ void DD7_RwD3D9OverlayRenderQueue::Render( void* camera )
 			vertices[index].y = entry.destRect.top - 0.5f;
 			vertices[index].z = 0.0f;
 			vertices[index].rhw = 0.0f;
-			vertices[index].u = static_cast<RwReal>(entry.srcRect.right);
+			vertices[index].u = 1.0f;
 			vertices[index].v = 0.0f;
 			vertices[index].emissiveColor = 0xFFFFFFFF;
 			index++;
@@ -81,22 +71,16 @@ void DD7_RwD3D9OverlayRenderQueue::Render( void* camera )
 			vertices[index].y = entry.destRect.bottom - 0.5f;
 			vertices[index].z = 0.0f;
 			vertices[index].rhw = 0.0f;
-			vertices[index].u = static_cast<RwReal>(entry.srcRect.right);
+			vertices[index].u = 1.0f;
 			vertices[index].v = 1.0f;
 			vertices[index].emissiveColor = 0xFFFFFFFF;
-
-			const float psData[4] = { 1.0f/entry.srcRect.right };
+			index++;
 
 			im2dShaderOverride = entry.shader;
 
-			_rwD3D9SetPixelShaderConstant( 0, psData, 1 );
 			RwRenderStateSet( rwRENDERSTATETEXTURERASTER, entry.raster );
-			RwIm2DRenderPrimitive(rwPRIMTYPETRISTRIP, vertices, sizeof(vertices) / sizeof(vertices[0]));
+			RwIm2DRenderPrimitive(rwPRIMTYPETRISTRIP, vertices, index);
 		}
-
-		RwD3D9SetSamplerState( 0, D3DSAMP_MINFILTER, minFilter );
-		RwD3D9SetSamplerState( 0, D3DSAMP_MAGFILTER, magFilter );
-		RwD3D9SetSamplerState( 0, D3DSAMP_MIPFILTER, mipFilter );
 
 		im2dShaderOverride = nullptr;
 		RwCameraEndUpdate( rwCamera );
