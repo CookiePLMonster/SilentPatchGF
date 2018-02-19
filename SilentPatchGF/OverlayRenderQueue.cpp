@@ -35,6 +35,11 @@ void DD7_RwD3D9OverlayRenderQueue::Render( void* camera )
 	RwCamera* rwCamera =  static_cast<RwCamera*>(camera);
 	if ( RwCameraBeginUpdate( rwCamera ) )
 	{
+		RwUInt32 minFilter = D3DTEXF_NONE, magFilter = D3DTEXF_NONE;
+
+		RwD3D9GetSamplerState( 0, D3DSAMP_MINFILTER, &minFilter );
+		RwD3D9GetSamplerState( 0, D3DSAMP_MAGFILTER, &magFilter );
+
 		RwD3D9SetSamplerState( 0, D3DSAMP_MINFILTER, D3DTEXF_POINT );
 		RwD3D9SetSamplerState( 0, D3DSAMP_MAGFILTER, D3DTEXF_POINT );
 
@@ -86,6 +91,9 @@ void DD7_RwD3D9OverlayRenderQueue::Render( void* camera )
 			RwRenderStateSet( rwRENDERSTATETEXTURERASTER, entry.raster );
 			RwIm2DRenderPrimitive(rwPRIMTYPETRISTRIP, vertices, sizeof(vertices) / sizeof(vertices[0]));
 		}
+
+		RwD3D9SetSamplerState( 0, D3DSAMP_MINFILTER, minFilter );
+		RwD3D9SetSamplerState( 0, D3DSAMP_MAGFILTER, magFilter );
 
 		im2dShaderOverride = nullptr;
 		RwCameraEndUpdate( rwCamera );
