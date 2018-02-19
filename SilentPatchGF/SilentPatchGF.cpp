@@ -27,14 +27,13 @@ HRESULT WINAPI DirectDrawRwD3D9Create( GUID *lpGUID, LPVOID *lplpDD, REFIID iid,
 }
 
 
-static void (*orgDelayedHookingPoint)(int);
-void InjectDelayedPatches( int val )
+static void (__stdcall *orgDelayedHookingPoint)(int);
+void __stdcall InjectDelayedPatches( int val )
 {
 	orgDelayedHookingPoint( val );
 
 	const HINSTANCE hInstance = GetModuleHandle( nullptr );
 	std::unique_ptr<ScopedUnprotect::Unprotect> Protect = ScopedUnprotect::UnprotectSectionOrFullModule( hInstance, ".text" );
-	ScopedUnprotect::Section Section2( hInstance, ".rdata");
 
 	// Obtain a path to the ASI
 	wchar_t			wcModulePath[MAX_PATH];
