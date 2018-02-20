@@ -81,7 +81,7 @@ void DirectDraw7Surface_RwD3D9Overlay::DecodeYUY2ToYUV()
 	while ( src != end )
 	{
 		const uint32_t yuy = *src++;
-		*dest++ = ((yuy & 0xFF) << 16) | (yuy & 0xFF00) | ((yuy & 0xFF000000) >> 24);
-		*dest++ = (yuy & 0xFFFF00) | ((yuy & 0xFF000000) >> 24);
+		*dest++ = (yuy & ~(0xFF0000)) | ((yuy & 0xFF) << 16);
+		*dest++ = yuy;
 	}
 }
