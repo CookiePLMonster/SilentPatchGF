@@ -84,6 +84,11 @@ void __stdcall InjectDelayedPatches( int val )
 		Memory::Patch<float>(0x7CF398 + 6, INIoption > 0 ? 1000.0f/INIoption : 0.0f );
 	}
 
+	if ( GetPrivateProfileIntW(L"SilentPatch", L"SkipIntroMovies", FALSE, wcModulePath) != FALSE )
+	{
+		Memory::Patch<uint32_t>( 0x664AFE + 1, 0x670CA5 );
+	}
+
 	bool keepAR = GetPrivateProfileIntW(L"SilentPatch", L"KeepFMVAspectRatio", FALSE, wcModulePath) != FALSE;
 	DirectDraw7_RwD3D9::OverlayRenderQueue().SetKeepAR( keepAR );
 }
