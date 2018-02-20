@@ -26,6 +26,24 @@ HRESULT WINAPI DirectDrawRwD3D9Create( GUID *lpGUID, LPVOID *lplpDD, REFIID iid,
 	return DD_OK;
 }
 
+static LONG (WINAPI *orgCreateKeyExA)( HKEY hKey, LPCSTR lpSubKey, DWORD Reserved, LPSTR lpClass, DWORD dwOptions, REGSAM samDesired,
+	LPSECURITY_ATTRIBUTES lpSecurityAttributes, PHKEY phkResult, LPDWORD lpdwDisposition );
+LONG WINAPI RegCreateKeyExA_NoHKLM( HKEY hKey, LPCSTR lpSubKey, DWORD Reserved, LPSTR lpClass, DWORD dwOptions, REGSAM samDesired,
+			LPSECURITY_ATTRIBUTES lpSecurityAttributes, PHKEY phkResult, LPDWORD lpdwDisposition )
+{
+	// Game attempts to write to HKEY_LOCAL_MACHINE which triggers registry virtualization
+	// so if registry keys are wrong or absent, we'll get a dummy `C:\GFPCROOT\` value as Install Dir
+	// and successive launches will use that... nasty and hard to figure out
+	if ( hKey == HKEY_LOCAL_MACHINE )
+	{
+		*phkResult = nullptr;
+		return ERROR_INVALID_HANDLE;
+	}
+	return orgCreateKeyExA( hKey, lpSubKey, Reserved, lpClass, dwOptions, samDesired, lpSecurityAttributes, phkResult, lpdwDisposition );
+
+}
+static auto* const pRegCreateKeyExA = &RegCreateKeyExA_NoHKLM;
+
 
 static void (__stdcall *orgDelayedHookingPoint)(int);
 void __stdcall InjectDelayedPatches( int val )
@@ -39,6 +57,27 @@ void __stdcall InjectDelayedPatches( int val )
 	wchar_t			wcModulePath[MAX_PATH];
 	GetModuleFileNameW(hDLLModule, wcModulePath, _countof(wcModulePath) - 3); // Minus max required space for extension
 	PathRenameExtensionW(wcModulePath, L".ini");
+
+	// Don't rely on Install Dir registry entry for obtaining game path
+	{
+		static char	gameDirPath[MAX_PATH];
+		GetModuleFileNameA(nullptr, gameDirPath, MAX_PATH);
+
+		char* slashPos = strrchr( gameDirPath, '\\' );
+		if ( slashPos != nullptr )
+		{
+			const auto stringSize = std::distance( gameDirPath, slashPos ) + 1;
+			Memory::Patch<uint8_t>( 0x7BEF9C + 1, stringSize );
+			Memory::Patch<uint8_t>( 0x7C5300 + 1, stringSize );
+			Memory::Patch<const char*>( 0x7BEFA5 + 1, gameDirPath );
+			Memory::Patch<const char*>( 0x7C5309 + 1, gameDirPath );
+		}
+
+		Memory::Patch<uint8_t>( 0x7BEFBF + 1, 10 );
+		Memory::Patch<uint8_t>( 0x7C532A + 1, 10 );
+		Memory::Patch<const char*>( 0x7BEFC1 + 1, "_XYZDUMMY_" );
+		Memory::Patch<const char*>( 0x7C532C + 1, "_XYZDUMMY_" );
+	}
 
 	if ( const int INIoption = GetPrivateProfileIntW(L"SilentPatch", L"FPSLimit", -1, wcModulePath); INIoption != -1 )
 	{
@@ -71,11 +110,11 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD reason, LPVOID lpReserved)
 
 			Memory::InjectHook( 0x8C58D6, DirectDrawRwD3D9Create );
 
-			
+			// Disallow writing to HKEY_LOCAL_MACHINE
+			orgCreateKeyExA = **(decltype(orgCreateKeyExA)**)(0x818CD2 + 2);
+			Memory::Patch<const void*>( 0x818CD2 + 2, &pRegCreateKeyExA );
 
 			InstallRenderQueueHook();
-			//Memory::InjectHook( 0x75AE90, RwCameraShowRaster_DrawOverlay, PATCH_JUMP );
-
 			break;
 		}
 	}
