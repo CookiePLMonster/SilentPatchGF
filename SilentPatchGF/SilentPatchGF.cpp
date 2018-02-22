@@ -119,6 +119,25 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD reason, LPVOID lpReserved)
 			orgCreateKeyExA = **(decltype(orgCreateKeyExA)**)(0x818CD2 + 2);
 			Memory::Patch<const void*>( 0x818CD2 + 2, &pRegCreateKeyExA );
 
+
+
+			// Default to desktop resolution
+			{
+				RECT			desktop;
+				GetWindowRect(GetDesktopWindow(), &desktop);
+
+				Memory::Patch( 0x8129A0, { 0x33, 0xC0, 0xC2, 0x08, 0x00 } ); // xor eax, eax / retn 8
+				Memory::Patch<int32_t>( 0x447122 + 1, desktop.right );
+				Memory::Patch<int32_t>( 0x447122 + 1, desktop.right );
+				Memory::Patch<int32_t>( 0x4471C4 + 1, desktop.bottom );
+				Memory::Patch<int32_t>( 0x4471C9 + 1, desktop.bottom );
+
+				Memory::Patch<int32_t>( 0x43A421 + 2, desktop.right );
+				Memory::Patch<int32_t>( 0x43A452 + 1, desktop.right );
+				Memory::Patch<int32_t>( 0x43A427 + 2, desktop.bottom );
+				Memory::Patch<int32_t>( 0x43A4D3 + 1, desktop.bottom );
+			}
+
 			InstallRenderQueueHook();
 			break;
 		}
