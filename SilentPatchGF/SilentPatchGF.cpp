@@ -89,8 +89,8 @@ void __stdcall InjectDelayedPatches( int val )
 		Memory::Patch<uint32_t>( 0x664AFE + 1, 0x670CA5 );
 	}
 
-	bool keepAR = GetPrivateProfileIntW(L"SilentPatch", L"KeepFMVAspectRatio", FALSE, wcModulePath) != FALSE;
-	DirectDraw7_RwD3D9::OverlayRenderQueue().SetKeepAR( keepAR );
+	int ARmode = GetPrivateProfileIntW(L"SilentPatch", L"KeepFMVAspectRatio", 0, wcModulePath);
+	DirectDraw7_RwD3D9::OverlayRenderQueue().SetKeepAR( ARmode );
 }
 
 BOOL APIENTRY DllMain(HMODULE hModule, DWORD reason, LPVOID lpReserved)

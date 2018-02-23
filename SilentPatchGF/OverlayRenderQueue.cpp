@@ -39,40 +39,43 @@ void DD7_RwD3D9OverlayRenderQueue::Render( void* camera )
 		{
 			RwIm2DVertex	vertices[4];
 
+			const RECT destRect = CalcRectForAR( entry.srcRect, entry.destRect );
+			const UVCoords uvCoords = CalcUVForAR( entry.srcRect, entry.destRect );
+
 			size_t index = 0;
-			vertices[index].x = entry.destRect.left - 0.5f;
-			vertices[index].y = entry.destRect.top - 0.5f;
+			vertices[index].x = destRect.left - 0.5f;
+			vertices[index].y = destRect.top - 0.5f;
 			vertices[index].z = 0.0f;
 			vertices[index].rhw = 0.0f;
-			vertices[index].u = 0.0f;
-			vertices[index].v = 0.0f;
+			vertices[index].u = uvCoords.left;
+			vertices[index].v = uvCoords.top;
 			vertices[index].emissiveColor = 0xFFFFFFFF;
 			index++;
 
-			vertices[index].x = entry.destRect.left - 0.5f;
-			vertices[index].y = entry.destRect.bottom - 0.5f;
+			vertices[index].x = destRect.left - 0.5f;
+			vertices[index].y = destRect.bottom - 0.5f;
 			vertices[index].z = 0.0f;
 			vertices[index].rhw = 0.0f;
-			vertices[index].u = 0.0f;
-			vertices[index].v = 1.0f;
+			vertices[index].u = uvCoords.left;
+			vertices[index].v = uvCoords.bottom;
 			vertices[index].emissiveColor = 0xFFFFFFFF;
 			index++;
 
-			vertices[index].x = entry.destRect.right - 0.5f;
-			vertices[index].y = entry.destRect.top - 0.5f;
+			vertices[index].x = destRect.right - 0.5f;
+			vertices[index].y = destRect.top - 0.5f;
 			vertices[index].z = 0.0f;
 			vertices[index].rhw = 0.0f;
-			vertices[index].u = 1.0f;
-			vertices[index].v = 0.0f;
+			vertices[index].u = uvCoords.right;
+			vertices[index].v = uvCoords.top;
 			vertices[index].emissiveColor = 0xFFFFFFFF;
 			index++;
 
-			vertices[index].x = entry.destRect.right - 0.5f;
-			vertices[index].y = entry.destRect.bottom - 0.5f;
+			vertices[index].x = destRect.right - 0.5f;
+			vertices[index].y = destRect.bottom - 0.5f;
 			vertices[index].z = 0.0f;
 			vertices[index].rhw = 0.0f;
-			vertices[index].u = 1.0f;
-			vertices[index].v = 1.0f;
+			vertices[index].u = uvCoords.right;
+			vertices[index].v = uvCoords.bottom;
 			vertices[index].emissiveColor = 0xFFFFFFFF;
 			index++;
 
@@ -89,10 +92,26 @@ void DD7_RwD3D9OverlayRenderQueue::Render( void* camera )
 	}
 }
 
+void DD7_RwD3D9OverlayRenderQueue::SetKeepAR(int mode)
+{
+	if ( mode == 1 )
+	{
+		m_stretchMode = StretchMode::Letterbox;
+	}
+	else if ( mode == 2 )
+	{
+		m_stretchMode = StretchMode::Crop;
+	}
+	else
+	{
+		m_stretchMode = StretchMode::Stretch;
+	}
+}
+
 RECT DD7_RwD3D9OverlayRenderQueue::CalcRectForAR(const RECT & srcRect, const RECT & destRect) const
 {
 	RECT rect = destRect;
-	if ( m_keepAspectRatio )
+	if ( m_stretchMode == StretchMode::Letterbox )
 	{
 		const LONG srcWidth = srcRect.right - srcRect.left;
 		const LONG srcHeight = srcRect.bottom - srcRect.top;
@@ -113,6 +132,34 @@ RECT DD7_RwD3D9OverlayRenderQueue::CalcRectForAR(const RECT & srcRect, const REC
 			rect.right = ( destWidth + outRectWidth ) / 2;
 		}
 	}
+	return rect;
+}
+
+auto DD7_RwD3D9OverlayRenderQueue::CalcUVForAR(const RECT & srcRect, const RECT & destRect) const -> UVCoords
+{
+	UVCoords rect = { 0.0f, 0.0f, 1.0f, 1.0f };
+	if ( m_stretchMode == StretchMode::Crop )
+	{
+		const LONG srcWidth = srcRect.right - srcRect.left;
+		const LONG srcHeight = srcRect.bottom - srcRect.top;
+		const double srcAR = static_cast<double>(srcWidth) / srcHeight;
+
+		const LONG destWidth = destRect.right - destRect.left;
+		const LONG destHeight = destRect.bottom - destRect.top;
+		const double destAR = static_cast<double>(destWidth) / destHeight;
+		if ( srcAR > destAR )
+		{
+			// Crop left/right
+		}
+		else if ( srcAR < destAR )
+		{
+			// Crop top/bottom
+			const LONG outSrcHeight = static_cast<LONG>(srcWidth / destAR);
+			rect.top = static_cast<float>( 1.0 - static_cast<double>(outSrcHeight)/srcHeight ) / 2.0f;
+			rect.bottom = 1.0f - rect.top;
+		}
+	}
+
 	return rect;
 }
 

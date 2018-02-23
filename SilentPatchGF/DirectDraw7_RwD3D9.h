@@ -9,18 +9,33 @@ public:
 	void PushToQueue( void* shader, void* raster, const RECT& srcRect, const RECT& destRect )
 	{
 		RemoveFromQueue( raster ); // First remove the overlay if it's already pushed
-		m_queue.emplace_back( shader, raster, srcRect, CalcRectForAR( srcRect, destRect ) );
+		m_queue.emplace_back( shader, raster, srcRect, destRect );
 	}
 
 	void RemoveFromQueue( void* raster );
 
 	void Render( void* camera );
 
-	void SetKeepAR( bool keep )
-		{ m_keepAspectRatio = keep; }
+	void SetKeepAR( int mode );
 
 private:
+	enum class StretchMode
+	{
+		Stretch,
+		Letterbox,
+		Crop,
+	};
+
+	struct UVCoords
+	{
+		float    left;
+		float    top;
+		float    right;
+		float    bottom;
+	};
+
 	RECT CalcRectForAR( const RECT& srcRect, const RECT& destRect ) const;
+	UVCoords CalcUVForAR( const RECT& srcRect, const RECT& destRect ) const;
 
 	struct RenderEntry
 	{
@@ -36,7 +51,7 @@ private:
 	};
 
 	std::vector< RenderEntry > m_queue;
-	bool m_keepAspectRatio = false;
+	StretchMode m_stretchMode = StretchMode::Stretch;
 };
 
 class DirectDraw7_RwD3D9 final : public IDirectDraw7
