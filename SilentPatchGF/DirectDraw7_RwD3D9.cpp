@@ -9,7 +9,18 @@ DD7_RwD3D9OverlayRenderQueue DirectDraw7_RwD3D9::ms_overlayRenderQueue;
 
 HRESULT DirectDraw7_RwD3D9::QueryInterface(REFIID riid, LPVOID * ppvObj)
 {
-	return E_NOTIMPL;
+	if ( ppvObj == nullptr ) return E_POINTER;
+
+	if ( riid == __uuidof(IUnknown) ||
+		riid == IID_IDirectDraw7 )
+	{
+		*ppvObj = static_cast<IDirectDraw7*>(this);
+		AddRef();
+		return S_OK;
+	}
+
+	*ppvObj = nullptr;
+	return E_POINTER;
 }
 
 ULONG DirectDraw7_RwD3D9::AddRef(void)

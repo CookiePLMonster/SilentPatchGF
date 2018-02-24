@@ -97,6 +97,7 @@
     <ClCompile Include="DirectDraw7Surface_RwD3D9.cpp" />
     <ClCompile Include="DirectDraw7Surface_RwD3D9Overlay.cpp" />
     <ClCompile Include="DirectDraw7_RwD3D9.cpp" />
+    <ClCompile Include="guid.cpp" />
     <ClCompile Include="OverlayRenderQueue.cpp" />
     <ClCompile Include="RW.cpp" />
     <ClCompile Include="SilentPatchGF.cpp" />

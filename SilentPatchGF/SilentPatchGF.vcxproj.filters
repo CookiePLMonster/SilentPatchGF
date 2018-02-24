@@ -62,6 +62,9 @@
     <ClCompile Include="RW.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="guid.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="yuy2torgb.hlsl">

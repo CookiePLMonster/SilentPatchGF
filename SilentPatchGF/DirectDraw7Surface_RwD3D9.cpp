@@ -8,7 +8,18 @@ void** rwengine = (void**)0x0102EAB8;
 
 HRESULT DirectDraw7Surface_RwD3D9::QueryInterface(REFIID riid, LPVOID * ppvObj)
 {
-	return E_NOTIMPL;
+	if ( ppvObj == nullptr ) return E_POINTER;
+
+	if ( riid == __uuidof(IUnknown) ||
+		riid == IID_IDirectDrawSurface7 )
+	{
+		*ppvObj = static_cast<IDirectDrawSurface7*>(this);
+		AddRef();
+		return S_OK;
+	}
+
+	*ppvObj = nullptr;
+	return E_POINTER;
 }
 
 ULONG DirectDraw7Surface_RwD3D9::AddRef(void)
