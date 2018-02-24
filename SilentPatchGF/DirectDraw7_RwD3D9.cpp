@@ -2,7 +2,6 @@
 #include "DirectDraw7Surface_RwD3D9Overlay.h"
 #include "DirectDraw7Surface_RwD3D9RT.h"
 
-#include <cassert>
 #include <d3d9.h>
 
 DD7_RwD3D9OverlayRenderQueue DirectDraw7_RwD3D9::ms_overlayRenderQueue;

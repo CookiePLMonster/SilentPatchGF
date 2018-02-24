@@ -4,6 +4,7 @@
 #include <rwcore.h>
 #include <d3d9.h>
 #include "MemoryMgr.h"
+#include "Patterns.h"
 
 #define RwEngineInstance (*rwengine)
 extern void** rwengine;
@@ -177,7 +178,12 @@ RwCamera *RwCameraShowRaster_DrawOverlay(RwCamera * camera, void *pDev, RwUInt32
 
 void InstallRenderQueueHook()
 {
-	Memory::InjectHook( 0x75AE90, RwCameraShowRaster_DrawOverlay, PATCH_JUMP );
-	Memory::ReadCall( 0x76F8F4, org_rwD3D9SetPixelShader );
-	Memory::InjectHook( 0x76F8F4, _rwD3D9SetPixelShader_Override );
+	using namespace Memory;
+	using namespace hook;
+
+	Memory::InjectHook( get_pattern( "56 8B 74 24 08 8B 56 60 50 51 52", -8 ), RwCameraShowRaster_DrawOverlay, PATCH_JUMP );
+	
+	void* addr = get_pattern( "6A 00 68 88 00 00 00", -5 );
+	Memory::ReadCall( addr, org_rwD3D9SetPixelShader );
+	Memory::InjectHook( addr, _rwD3D9SetPixelShader_Override );
 }

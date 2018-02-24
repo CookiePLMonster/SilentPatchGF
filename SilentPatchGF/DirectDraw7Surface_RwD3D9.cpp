@@ -3,8 +3,7 @@
 #include <rwcore.h>
 #define RwEngineInstance (*rwengine)
 
-void** rwengine = (void**)0x0102EAB8;
-
+extern void** rwengine;
 
 HRESULT DirectDraw7Surface_RwD3D9::QueryInterface(REFIID riid, LPVOID * ppvObj)
 {
@@ -266,30 +265,3 @@ HRESULT DirectDraw7Surface_RwD3D9::GetLOD(LPDWORD)
 {
 	return E_NOTIMPL;
 }
-
-RwCamera    *RwCameraBeginUpdate(RwCamera * camera)
-{
-	return camera->beginUpdate(camera);
-}
-
-RwCamera    *RwCameraEndUpdate(RwCamera * camera)
-{
-	return camera->endUpdate(camera);
-}
-
-#include "MemoryMgr.h"
-
-WRAPPER RwRaster    *RwRasterShowRaster(RwRaster * raster, void *dev, RwUInt32 flags) { EAXJMP(0x75E640); }
-
-RwCamera *
-RwCameraShowRaster(RwCamera *camera, void *dev, RwUInt32 flags)
-{
-	if (RwRasterShowRaster(camera->frameBuffer, dev, flags))
-	{
-		return camera;
-	}
-
-	/* Device error */
-	return NULL;
-}
-

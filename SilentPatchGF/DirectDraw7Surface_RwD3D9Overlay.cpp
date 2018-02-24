@@ -1,8 +1,6 @@
 #include "DirectDraw7Surface_RwD3D9Overlay.h"
 #include "DirectDraw7Surface_RwD3D9RT.h"
 
-#include <cassert>
-
 static int32_t DD7LockModeToRWLockMode( DWORD dwFlags )
 {
 	int32_t lockMode = 0;
@@ -39,8 +37,12 @@ HRESULT DirectDraw7Surface_RwD3D9Overlay::Unlock(LPRECT lpRect)
 
 HRESULT DirectDraw7Surface_RwD3D9Overlay::UpdateOverlay(LPRECT lpSrcRect, LPDIRECTDRAWSURFACE7 lpDDDestSurface, LPRECT lpDestRect, DWORD dwFlags, LPDDOVERLAYFX lpDDOverlayFx)
 {
+	if ( lpDDDestSurface == nullptr ) return DDERR_INVALIDPARAMS;
+
 	if ( (dwFlags & DDOVER_SHOW) != 0 )
 	{
+		if ( lpSrcRect == nullptr || lpDestRect == nullptr ) return DDERR_INVALIDPARAMS;
+
 		DirectDraw7Surface_RwD3D9RT* rt = static_cast<DirectDraw7Surface_RwD3D9RT*>(lpDDDestSurface);
 		rt->AddOverlayToQueue( m_shader, m_raster, *lpSrcRect, *lpDestRect );
 		return DD_OK;
@@ -53,8 +55,7 @@ HRESULT DirectDraw7Surface_RwD3D9Overlay::UpdateOverlay(LPRECT lpSrcRect, LPDIRE
 		return DD_OK;
 	}
 
-	assert( !"Unimplemented UpdateOverlay flag!" );
-	return E_NOTIMPL;
+	return DDERR_UNSUPPORTED;
 }
 
 DirectDraw7Surface_RwD3D9Overlay::DirectDraw7Surface_RwD3D9Overlay(void* shader, int32_t width, int32_t height)

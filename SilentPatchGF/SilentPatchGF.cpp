@@ -6,9 +6,9 @@
 
 #include <windows.h>
 #include "MemoryMgr.h"
+#include "Patterns.h"
 
 #include "DirectDraw7_RwD3D9.h"
-#include <cassert>
 #include <Shlwapi.h>
 
 #include <rwcore.h>
@@ -58,35 +58,45 @@ void __stdcall InjectDelayedPatches( int val )
 	GetModuleFileNameW(hDLLModule, wcModulePath, _countof(wcModulePath) - 3); // Minus max required space for extension
 	PathRenameExtensionW(wcModulePath, L".ini");
 
+	using namespace Memory;
+	using namespace hook;
+
 	// Don't rely on Install Dir registry entry for obtaining game path
 	{
 		static char	gameDirPath[MAX_PATH];
 		GetModuleFileNameA(nullptr, gameDirPath, MAX_PATH);
 
+		auto addr1 = pattern( "6A ? 33 DB BE ? ? ? ? 68 ? ? ? ? 8D 4C 24 50" ).get_one();
+		uintptr_t addr2 = (uintptr_t)ReadCallFrom( get_pattern( "E8 ? ? ? ? 50 8D 54 24 2C 68" ), 0x20 );
+
 		char* slashPos = strrchr( gameDirPath, '\\' );
 		if ( slashPos != nullptr )
 		{
 			const auto stringSize = std::distance( gameDirPath, slashPos ) + 1;
-			Memory::Patch<uint8_t>( 0x7BEF9C + 1, stringSize );
-			Memory::Patch<uint8_t>( 0x7C5300 + 1, stringSize );
-			Memory::Patch<const char*>( 0x7BEFA5 + 1, gameDirPath );
-			Memory::Patch<const char*>( 0x7C5309 + 1, gameDirPath );
+
+			Patch<uint8_t>( addr1.get<void>( 1 ), stringSize );
+			Patch<const char*>( addr1.get<void>( 9 + 1 ), gameDirPath );
+
+			Patch<uint8_t>( addr2 + 1, stringSize );	
+			Patch<const char*>( addr2 + 9 + 1, gameDirPath );
 		}
 
-		Memory::Patch<uint8_t>( 0x7BEFBF + 1, 10 );
-		Memory::Patch<uint8_t>( 0x7C532A + 1, 10 );
-		Memory::Patch<const char*>( 0x7BEFC1 + 1, "_XYZDUMMY_" );
-		Memory::Patch<const char*>( 0x7C532C + 1, "_XYZDUMMY_" );
+		Patch<uint8_t>( addr1.get<void>( 0x23 + 1 ), 10 );
+		Patch<const char*>(addr1.get<void>( 0x25 + 1 ), "_XYZDUMMY_" );
+
+		Patch<uint8_t>( addr2 + 0x2A + 1, 10 );	
+		Patch<const char*>( addr2 + 0x2C + 1, "_XYZDUMMY_" );
 	}
 
 	if ( const int INIoption = GetPrivateProfileIntW(L"SilentPatch", L"FPSLimit", -1, wcModulePath); INIoption != -1 )
 	{
-		Memory::Patch<float>(0x7CF398 + 6, INIoption > 0 ? 1000.0f/INIoption : 0.0f );
+		Patch<float>( get_pattern( "C7 05 ? ? ? ? ? ? ? ? 7D 06", 6 ), INIoption > 0 ? 1000.0f/INIoption : 0.0f );
 	}
 
 	if ( GetPrivateProfileIntW(L"SilentPatch", L"SkipIntroMovies", FALSE, wcModulePath) != FALSE )
 	{
-		Memory::Patch<uint32_t>( 0x664AFE + 1, 0x670CA5 );
+		void* getUndefinedValue = ReadCallFrom( get_pattern( "E8 ? ? ? ? EB D1") );
+		InjectHook( get_pattern( "83 EC 08 56 88 88 91 00 00 00 88 88 92 00 00 00", -6 ), getUndefinedValue, PATCH_JUMP );
 	}
 
 	int ARmode = GetPrivateProfileIntW(L"SilentPatch", L"KeepFMVAspectRatio", 0, wcModulePath);
@@ -108,29 +118,45 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD reason, LPVOID lpReserved)
 			std::unique_ptr<ScopedUnprotect::Unprotect> Protect = ScopedUnprotect::UnprotectSectionOrFullModule( hInstance, ".text" );
 			ScopedUnprotect::Section Section2( hInstance, ".rdata");
 
-			strcpy_s( (char*)0xA8F4D8, 16, "log.log" );
+			using namespace Memory;
+			using namespace hook;
 
-			Memory::ReadCall( 0x446B7A, orgDelayedHookingPoint );
-			Memory::InjectHook( 0x446B7A, InjectDelayedPatches );
+			// Delayed patches
+			{
+				void* addr = get_pattern( "68 BB 7C 00 00 E8", 5 );
+				ReadCall( addr, orgDelayedHookingPoint );
+				InjectHook( addr, InjectDelayedPatches );
+			}
 
-			Memory::InjectHook( 0x8C58D6, DirectDrawRwD3D9Create );
+			// Log file relocated to game directory
+			{
+				char** str = get_pattern<char*>( "8B 0D ? ? ? ? 89 15 ? ? ? ? 8D 54 24 14", 2 );
+				strcpy_s( *str, 16, "log.log" );
+			}
+
+			// DirectDraw7 -> RwD3D9 wrapper
+			InjectHook( get_pattern( "89 3B E8 ? ? ? ? 3B C7", 2 ), DirectDrawRwD3D9Create );
 
 			// Disallow writing to HKEY_LOCAL_MACHINE
-			orgCreateKeyExA = **(decltype(orgCreateKeyExA)**)(0x818CD2 + 2);
-			Memory::Patch<const void*>( 0x818CD2 + 2, &pRegCreateKeyExA );
+			{
+				void* addr = get_pattern( "FF 15 ? ? ? ? 85 C0 75 3D", 2 );
 
-
+				orgCreateKeyExA = **(decltype(orgCreateKeyExA)**)addr;
+				Patch<const void*>( addr, &pRegCreateKeyExA );
+			}
 
 			// Default to desktop resolution
 			{
 				RECT			desktop;
 				GetWindowRect(GetDesktopWindow(), &desktop);
 
-				Memory::Patch( 0x8129A0, { 0x33, 0xC0, 0xC2, 0x08, 0x00 } ); // xor eax, eax / retn 8
-				Memory::Patch<int32_t>( 0x447122 + 1, desktop.right );
-				Memory::Patch<int32_t>( 0x4471C4 + 1, desktop.right );
-				Memory::Patch<int32_t>( 0x447188 + 1, desktop.bottom );
-				Memory::Patch<int32_t>( 0x4471C9 + 1, desktop.bottom );
+				Patch( get_pattern( "64 A1 00 00 00 00 50 64 89 25 00 00 00 00 81 EC AC 04 00 00", -7 ), { 0x33, 0xC0, 0xC2, 0x08, 0x00 } ); // xor eax, eax / retn 8
+				Patch<int32_t>( get_pattern( "68 ? ? ? ? 50 E8 ? ? ? ? 50 8D 4C 24 58", 1 ), desktop.right );
+				Patch<int32_t>( get_pattern( "68 ? ? ? ? 51 E8 ? ? ? ? 50 8D 54 24 3C", 1 ), desktop.bottom );
+
+				auto resolution = pattern( "8D 4C 24 30 E8 ? ? ? ? BE" ).get_one();
+				Patch<int32_t>( resolution.get<void>( 9 + 1 ), desktop.right );
+				Patch<int32_t>( resolution.get<void>( 14 + 1 ), desktop.bottom );
 			}
 
 			InstallRenderQueueHook();
