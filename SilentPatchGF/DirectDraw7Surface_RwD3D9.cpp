@@ -24,12 +24,12 @@ HRESULT DirectDraw7Surface_RwD3D9::QueryInterface(REFIID riid, LPVOID * ppvObj)
 
 ULONG DirectDraw7Surface_RwD3D9::AddRef(void)
 {
-	return InterlockedIncrement( &m_refCount );
+	return _InterlockedIncrement( &m_refCount );
 }
 
 ULONG DirectDraw7Surface_RwD3D9::Release(void)
 {
-	LONG ref = InterlockedDecrement( &m_refCount );
+	LONG ref = _InterlockedDecrement( &m_refCount );
 	if ( ref == 0 )
 	{
 		delete this;
