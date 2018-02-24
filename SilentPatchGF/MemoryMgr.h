@@ -20,6 +20,7 @@
 #include <Windows.h>
 
 #include <cstdint>
+#include <cassert>
 
 #ifndef _MEMORY_NO_CRT
 #include <initializer_list>
@@ -97,6 +98,14 @@ namespace Memory
 		func = Func(*(ptrdiff_t*)((intptr_t)address+1) + (intptr_t)address + 5);
 	}
 
+	template<typename AT>
+	inline void*	ReadCallFrom(AT address, ptrdiff_t offset = 0)
+	{
+		uintptr_t addr;
+		ReadCall( address, addr );
+		return reinterpret_cast<void*>( addr + offset );
+	}
+
 #ifndef _MEMORY_NO_CRT
 	inline bool MemEquals(uintptr_t address, std::initializer_list<uint8_t> val)
 	{
@@ -104,6 +113,13 @@ namespace Memory
 		return std::equal( val.begin(), val.end(), stdext::make_checked_array_iterator(mem, val.size()) );
 	}
 #endif
+
+	template<typename AT>
+	inline AT Verify(AT address, uintptr_t expected)
+	{
+		assert( uintptr_t(address) == expected );
+		return address;
+	}
 
 	namespace DynBase
 	{
@@ -145,10 +161,22 @@ namespace Memory
 			Memory::ReadCall(DynBaseAddress(address), func);
 		}
 
+		template<typename AT>
+		inline void*	ReadCallFrom(AT address, ptrdiff_t offset = 0)
+		{
+			return Memory::ReadCallFrom(DynBaseAddress(address), offset);
+		}
+
 #ifndef _MEMORY_NO_CRT
 		inline bool MemEquals(uintptr_t address, std::initializer_list<uint8_t> val)
 		{
 			return Memory::MemEquals(DynBaseAddress(address), std::move(val));
+		}
+
+		template<typename AT>
+		inline AT Verify(AT address, uintptr_t expected)
+		{
+			return Memory::Verify(address, DynBaseAddress(expected));
 		}
 #endif
 	};
@@ -210,12 +238,24 @@ namespace Memory
 			Memory::ReadCall(address, func);
 		}
 
+		template<typename AT>
+		inline void*	ReadCallFrom(AT address, ptrdiff_t offset = 0)
+		{
+			return Memory::ReadCallFrom(address, offset);
+		}
+
 #ifndef _MEMORY_NO_CRT
 		inline bool MemEquals(uintptr_t address, std::initializer_list<uint8_t> val)
 		{
 			return Memory::MemEquals(address, std::move(val));
 		}
 #endif
+
+		template<typename AT>
+		inline AT Verify(AT address, uintptr_t expected)
+		{
+			return Memory::Verify(address, expected);
+		}
 
 		namespace DynBase
 		{
@@ -257,12 +297,25 @@ namespace Memory
 				Memory::ReadCall(DynBaseAddress(address), func);
 			}
 
+			template<typename AT>
+			inline void*	ReadCallFrom(AT address, ptrdiff_t offset = 0)
+			{
+				Memory::ReadCallFrom(DynBaseAddress(address), offset);
+			}
+
 #ifndef _MEMORY_NO_CRT
 			inline bool MemEquals(uintptr_t address, std::initializer_list<uint8_t> val)
 			{
 				return Memory::MemEquals(DynBaseAddress(address), std::move(val));
 			}
 #endif
+
+			template<typename AT>
+			inline AT Verify(AT address, uintptr_t expected)
+			{
+				return Memory::Verify(address, DynBaseAddress(expected));
+			}
+
 		};
 	};
 };
