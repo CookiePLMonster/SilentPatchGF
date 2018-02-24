@@ -187,10 +187,8 @@ HRESULT DirectDraw7Surface_RwD3D9::Unlock(LPRECT)
 	return E_NOTIMPL;
 }
 
-static bool drawOverlay = false;
 HRESULT DirectDraw7Surface_RwD3D9::UpdateOverlay(LPRECT, LPDIRECTDRAWSURFACE7, LPRECT, DWORD, LPDDOVERLAYFX)
 {
-	drawOverlay = true;
 	return E_NOTIMPL;
 }
 
