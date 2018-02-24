@@ -224,7 +224,6 @@ DirectDraw7_RwD3D9::~DirectDraw7_RwD3D9()
 extern HINSTANCE hDLLModule;
 void DirectDraw7_RwD3D9::CreateYUY2Shader()
 {
-	// TODO: This should be a bit different
 	HRSRC		resource = FindResource(hDLLModule, MAKEINTRESOURCE(IDR_YUY2SHADER), RT_RCDATA);
 	RwUInt32*	shader = static_cast<RwUInt32*>(LockResource( LoadResource(hDLLModule, resource) ));
 
