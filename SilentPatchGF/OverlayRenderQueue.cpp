@@ -108,7 +108,7 @@ void DD7_RwD3D9OverlayRenderQueue::SetKeepAR(int mode)
 	}
 }
 
-RECT DD7_RwD3D9OverlayRenderQueue::CalcRectForAR(const RECT & srcRect, const RECT & destRect) const
+RECT DD7_RwD3D9OverlayRenderQueue::CalcRectForAR(const RECT& srcRect, const RECT& destRect) const
 {
 	RECT rect = destRect;
 	if ( m_stretchMode == StretchMode::Letterbox )
@@ -123,11 +123,14 @@ RECT DD7_RwD3D9OverlayRenderQueue::CalcRectForAR(const RECT & srcRect, const REC
 		if ( srcAR > destAR )
 		{
 			// Letterbox
+			const LONG outRectHeight = destWidth * srcHeight / srcWidth;
+			rect.top = ( destHeight - outRectHeight ) / 2;
+			rect.bottom = ( destHeight + outRectHeight ) / 2;
 		}
 		else if ( srcAR < destAR )
 		{
 			// Pillarbox
-			const LONG outRectWidth = static_cast<LONG>(destHeight * srcAR);
+			const LONG outRectWidth = destHeight * srcWidth / srcHeight;
 			rect.left = ( destWidth - outRectWidth ) / 2;
 			rect.right = ( destWidth + outRectWidth ) / 2;
 		}
@@ -135,7 +138,7 @@ RECT DD7_RwD3D9OverlayRenderQueue::CalcRectForAR(const RECT & srcRect, const REC
 	return rect;
 }
 
-auto DD7_RwD3D9OverlayRenderQueue::CalcUVForAR(const RECT & srcRect, const RECT & destRect) const -> UVCoords
+auto DD7_RwD3D9OverlayRenderQueue::CalcUVForAR(const RECT& srcRect, const RECT& destRect) const -> UVCoords
 {
 	UVCoords rect = { 0.0f, 0.0f, 1.0f, 1.0f };
 	if ( m_stretchMode == StretchMode::Crop )
@@ -150,11 +153,14 @@ auto DD7_RwD3D9OverlayRenderQueue::CalcUVForAR(const RECT & srcRect, const RECT 
 		if ( srcAR > destAR )
 		{
 			// Crop left/right
+			const LONG outSrcWidth = srcHeight * destWidth / destHeight;
+			rect.left = static_cast<float>( 1.0 - static_cast<double>(outSrcWidth)/srcWidth ) / 2.0f;
+			rect.right = 1.0f - rect.left;
 		}
 		else if ( srcAR < destAR )
 		{
 			// Crop top/bottom
-			const LONG outSrcHeight = static_cast<LONG>(srcWidth / destAR);
+			const LONG outSrcHeight = srcWidth * destHeight / destWidth;
 			rect.top = static_cast<float>( 1.0 - static_cast<double>(outSrcHeight)/srcHeight ) / 2.0f;
 			rect.bottom = 1.0f - rect.top;
 		}
