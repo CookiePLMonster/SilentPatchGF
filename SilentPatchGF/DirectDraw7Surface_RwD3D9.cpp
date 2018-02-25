@@ -1,10 +1,5 @@
 #include "DirectDraw7Surface_RwD3D9.h"
 
-#include <rwcore.h>
-#define RwEngineInstance (*rwengine)
-
-extern void** rwengine;
-
 HRESULT DirectDraw7Surface_RwD3D9::QueryInterface(REFIID riid, LPVOID * ppvObj)
 {
 	if ( ppvObj == nullptr ) return E_POINTER;

@@ -11,13 +11,9 @@
 #include "DirectDraw7_RwD3D9.h"
 #include <Shlwapi.h>
 
-#include <rwcore.h>
-
 #pragma comment(lib, "shlwapi.lib")
 
 HINSTANCE hDLLModule;
-
-extern RwCamera    *RwCameraShowRaster_DrawOverlay(RwCamera * camera, void *pDev, RwUInt32 flags);
 
 HRESULT WINAPI DirectDrawRwD3D9Create( GUID *lpGUID, LPVOID *lplpDD, REFIID iid, IUnknown *pUnkOuter )
 {

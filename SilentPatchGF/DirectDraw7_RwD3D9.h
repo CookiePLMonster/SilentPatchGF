@@ -3,6 +3,8 @@
 #include <ddraw.h>
 #include <vector>
 
+#include "RW.h"
+
 class DD7_RwD3D9OverlayRenderQueue
 {
 public:
@@ -53,6 +55,8 @@ private:
 	std::vector< RenderEntry > m_queue;
 	StretchMode m_stretchMode = StretchMode::Stretch;
 };
+
+RwCamera* RwCameraShowRaster_DrawOverlay(RwCamera* camera, void* pDev, uint32_t flags);
 
 class DirectDraw7_RwD3D9 final : public IDirectDraw7
 {

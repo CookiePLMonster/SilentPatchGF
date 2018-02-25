@@ -113,6 +113,7 @@
     <ClInclude Include="MemoryMgr.h" />
     <ClInclude Include="Patterns.h" />
     <ClInclude Include="resource.h" />
+    <ClInclude Include="RW.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DirectDraw7Surface_RwD3D9.cpp" />

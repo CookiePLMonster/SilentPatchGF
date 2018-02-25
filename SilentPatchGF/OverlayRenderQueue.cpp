@@ -1,13 +1,10 @@
 #include "DirectDraw7_RwD3D9.h"
 
 #include <algorithm>
-#include <rwcore.h>
 #include <d3d9.h>
 #include "MemoryMgr.h"
 #include "Patterns.h"
-
-#define RwEngineInstance (*rwengine)
-extern void** rwengine;
+#include "RW.h"
 
 void (*org_rwD3D9SetPixelShader)(void* shader);
 
@@ -170,7 +167,7 @@ auto DD7_RwD3D9OverlayRenderQueue::CalcUVForAR(const RECT& srcRect, const RECT& 
 	return rect;
 }
 
-RwCamera *RwCameraShowRaster_DrawOverlay(RwCamera * camera, void *pDev, RwUInt32 flags)
+RwCamera *RwCameraShowRaster_DrawOverlay(RwCamera * camera, void *pDev, uint32_t flags)
 {
 	DirectDraw7_RwD3D9::OverlayRenderQueue().Render( camera );
 	return RwCameraShowRaster( camera, pDev, flags );
@@ -181,9 +178,9 @@ void InstallRenderQueueHook()
 	using namespace Memory;
 	using namespace hook;
 
-	Memory::InjectHook( get_pattern( "56 8B 74 24 08 8B 56 60 50 51 52", -8 ), RwCameraShowRaster_DrawOverlay, PATCH_JUMP );
+	InjectHook( get_pattern( "56 8B 74 24 08 8B 56 60 50 51 52", -8 ), RwCameraShowRaster_DrawOverlay, PATCH_JUMP );
 	
 	void* addr = get_pattern( "6A 00 68 88 00 00 00", -5 );
-	Memory::ReadCall( addr, org_rwD3D9SetPixelShader );
-	Memory::InjectHook( addr, _rwD3D9SetPixelShader_Override );
+	ReadCall( addr, org_rwD3D9SetPixelShader );
+	InjectHook( addr, _rwD3D9SetPixelShader_Override );
 }

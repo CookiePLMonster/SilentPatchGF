@@ -1,7 +1,6 @@
 #pragma once
 #include "DirectDraw7Surface_RwD3D9.h"
 
-#include <rwcore.h>
 #include <cstdint>
 
 class DirectDraw7Surface_RwD3D9Overlay final : public DirectDraw7Surface_RwD3D9
