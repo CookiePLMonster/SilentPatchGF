@@ -1,0 +1,2 @@
+EXPORTS
+	DirectDrawCreateEx=DirectDrawRwD3D9Create

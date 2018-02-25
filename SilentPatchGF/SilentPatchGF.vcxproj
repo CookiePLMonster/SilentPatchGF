@@ -69,6 +69,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <LargeAddressAware>true</LargeAddressAware>
+      <ModuleDefinitionFile>SilentPatchGF.def</ModuleDefinitionFile>
     </Link>
     <ResourceCompile>
       <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -96,6 +97,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <SubSystem>Windows</SubSystem>
       <LargeAddressAware>true</LargeAddressAware>
+      <ModuleDefinitionFile>SilentPatchGF.def</ModuleDefinitionFile>
     </Link>
     <FxCompile>
       <ShaderModel>2.0</ShaderModel>
