@@ -44,7 +44,7 @@ void DD7_RwD3D9OverlayRenderQueue::Render( void* camera )
 			vertices[index].x = destRect.left - 0.5f;
 			vertices[index].y = destRect.top - 0.5f;
 			vertices[index].z = 0.0f;
-			vertices[index].rhw = 0.0f;
+			vertices[index].rhw = 1.0f;
 			vertices[index].u = uvCoords.left;
 			vertices[index].v = uvCoords.top;
 			vertices[index].emissiveColor = 0xFFFFFFFF;
@@ -53,7 +53,7 @@ void DD7_RwD3D9OverlayRenderQueue::Render( void* camera )
 			vertices[index].x = destRect.left - 0.5f;
 			vertices[index].y = destRect.bottom - 0.5f;
 			vertices[index].z = 0.0f;
-			vertices[index].rhw = 0.0f;
+			vertices[index].rhw = 1.0f;
 			vertices[index].u = uvCoords.left;
 			vertices[index].v = uvCoords.bottom;
 			vertices[index].emissiveColor = 0xFFFFFFFF;
@@ -62,7 +62,7 @@ void DD7_RwD3D9OverlayRenderQueue::Render( void* camera )
 			vertices[index].x = destRect.right - 0.5f;
 			vertices[index].y = destRect.top - 0.5f;
 			vertices[index].z = 0.0f;
-			vertices[index].rhw = 0.0f;
+			vertices[index].rhw = 1.0f;
 			vertices[index].u = uvCoords.right;
 			vertices[index].v = uvCoords.top;
 			vertices[index].emissiveColor = 0xFFFFFFFF;
@@ -71,7 +71,7 @@ void DD7_RwD3D9OverlayRenderQueue::Render( void* camera )
 			vertices[index].x = destRect.right - 0.5f;
 			vertices[index].y = destRect.bottom - 0.5f;
 			vertices[index].z = 0.0f;
-			vertices[index].rhw = 0.0f;
+			vertices[index].rhw = 1.0f;
 			vertices[index].u = uvCoords.right;
 			vertices[index].v = uvCoords.bottom;
 			vertices[index].emissiveColor = 0xFFFFFFFF;
