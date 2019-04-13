@@ -2,6 +2,7 @@
 
 #include "MemoryMgr.h"
 #include "Patterns.h"
+#include "LateStaticInit.h"
 
 #include <objbase.h>
 
@@ -20,24 +21,35 @@ typedef int
 typedef int
 (*RwRenderStateSetFunction)(RwRenderState nState,void *pParam);
 
-void** rwengine = *hook::get_pattern<void**>( "74 75 8B 15", 4 );
+void** rwengine;
+LATE_STATIC_INIT( __LINE__, rwengine = *hook::get_pattern<void**>( "74 75 8B 15", 4 ); );
 
-static void* varRwD3D9CreatePixelShader = Memory::ReadCallFrom( hook::get_pattern( "E8 ? ? ? ? 83 C4 30 FF 05" ) );
+static void* varRwD3D9CreatePixelShader;
+LATE_STATIC_INIT( __LINE__, varRwD3D9CreatePixelShader = Memory::ReadCallFrom( hook::get_pattern( "E8 ? ? ? ? 83 C4 30 FF 05" ) ); );
 WRAPPER int RwD3D9CreatePixelShader(const uint32_t *function, void **shader) { VARJMP(varRwD3D9CreatePixelShader); }
 
-static void* var__rwD3D9RenderStateReset = hook::get_pattern( "53 8B 1D ? ? ? ? 55 56 8B 35 ? ? ? ? 57 89 44 24 10", -6 );
+static void* var__rwD3D9RenderStateReset;
+LATE_STATIC_INIT( __LINE__, var__rwD3D9RenderStateReset = hook::get_pattern( "53 8B 1D ? ? ? ? 55 56 8B 35 ? ? ? ? 57 89 44 24 10", -6 ); );
 WRAPPER void __rwD3D9RenderStateReset() { VARJMP(var__rwD3D9RenderStateReset); }
 
-static void* varRwRasterCreate = hook::get_pattern( "8B 0D ? ? ? ? 8B 54 01 60 56 68 07 04 03 00 52", -5 );
+static void* varRwRasterCreate;
+LATE_STATIC_INIT( __LINE__, varRwRasterCreate = hook::get_pattern( "8B 0D ? ? ? ? 8B 54 01 60 56 68 07 04 03 00 52", -5 ); );
 WRAPPER RwRaster* RwRasterCreate(int32_t width, int32_t height, int32_t depth, int32_t flags) { VARJMP(varRwRasterCreate); }
-static void* varRwRasterDestroy = hook::get_pattern( "6A 00 56 6A 00 FF 50 5C", -0x15 );
+
+static void* varRwRasterDestroy;
+LATE_STATIC_INIT( __LINE__, varRwRasterDestroy = hook::get_pattern( "6A 00 56 6A 00 FF 50 5C", -0x15 ); );
 WRAPPER int RwRasterDestroy(RwRaster* raster) { VARJMP(varRwRasterDestroy); }
-static void* varRwRasterShowRaster = hook::get_pattern( "56 8B B0 98 00 00 00 57 E8", -5 );
+
+static void* varRwRasterShowRaster;
+LATE_STATIC_INIT( __LINE__, varRwRasterShowRaster = hook::get_pattern( "56 8B B0 98 00 00 00 57 E8", -5 ); );
 WRAPPER RwRaster* RwRasterShowRaster(RwRaster* raster, void* dev, int32_t flags) { VARJMP(varRwRasterShowRaster); }
 
-static void* varRwEngineGetVideoModeInfo = hook::get_pattern( "83 EC 08 56 8B 74 24 10 50 6A 00 56 6A 06 FF 51 14", -0xA );
+static void* varRwEngineGetVideoModeInfo;
+LATE_STATIC_INIT( __LINE__, varRwEngineGetVideoModeInfo = hook::get_pattern( "83 EC 08 56 8B 74 24 10 50 6A 00 56 6A 06 FF 51 14", -0xA ); );
 WRAPPER RwVideoMode* RwEngineGetVideoModeInfo(RwVideoMode* modeinfo, int32_t modeIndex) { VARJMP(varRwEngineGetVideoModeInfo); }
-static void* varRwEngineGetCurrentVideoMode =hook::get_pattern( "83 EC 0C 6A 00 6A 00 8D 44 24 08 50 6A 0A FF 51 14 ", -0x6 );
+
+static void* varRwEngineGetCurrentVideoMode;
+LATE_STATIC_INIT( __LINE__, varRwEngineGetCurrentVideoMode = hook::get_pattern( "83 EC 0C 6A 00 6A 00 8D 44 24 08 50 6A 0A FF 51 14 ", -0x6 ); );
 WRAPPER int32_t RwEngineGetCurrentVideoMode(void) { VARJMP(varRwEngineGetCurrentVideoMode); }
 
 static RwRaster* rwCameraGetFrameBuffer( RwCamera* camera )
