@@ -117,6 +117,8 @@ RwRaster* RwRasterUnlock(RwRaster* raster);
 int RwD3D9CreatePixelShader(const uint32_t *function, void **shader);
 void RwD3D9DeletePixelShader(void *shader);
 
+void __rwD3D9RenderStateReset();
+
 RwVideoMode* RwEngineGetVideoModeInfo(RwVideoMode* modeinfo, int32_t modeIndex);
 int32_t RwEngineGetCurrentVideoMode(void);
 

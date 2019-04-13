@@ -33,6 +33,8 @@ void DD7_RwD3D9OverlayRenderQueue::Render( void* camera )
 	RwCamera* rwCamera =  static_cast<RwCamera*>(camera);
 	if ( RwCameraBeginUpdate( rwCamera ) )
 	{
+		__rwD3D9RenderStateReset();
+
 		for ( const auto& entry : m_queue )
 		{
 			RwIm2DVertex	vertices[4];

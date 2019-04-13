@@ -25,6 +25,9 @@ void** rwengine = *hook::get_pattern<void**>( "74 75 8B 15", 4 );
 static void* varRwD3D9CreatePixelShader = Memory::ReadCallFrom( hook::get_pattern( "E8 ? ? ? ? 83 C4 30 FF 05" ) );
 WRAPPER int RwD3D9CreatePixelShader(const uint32_t *function, void **shader) { VARJMP(varRwD3D9CreatePixelShader); }
 
+static void* var__rwD3D9RenderStateReset = hook::get_pattern( "53 8B 1D ? ? ? ? 55 56 8B 35 ? ? ? ? 57 89 44 24 10", -6 );
+WRAPPER void __rwD3D9RenderStateReset() { VARJMP(var__rwD3D9RenderStateReset); }
+
 static void* varRwRasterCreate = hook::get_pattern( "8B 0D ? ? ? ? 8B 54 01 60 56 68 07 04 03 00 52", -5 );
 WRAPPER RwRaster* RwRasterCreate(int32_t width, int32_t height, int32_t depth, int32_t flags) { VARJMP(varRwRasterCreate); }
 static void* varRwRasterDestroy = hook::get_pattern( "6A 00 56 6A 00 FF 50 5C", -0x15 );
