@@ -59,5 +59,5 @@ public:
 	virtual ~DirectDraw7Surface_RwD3D9() = default;
 
 private:
-	LONG m_refCount = 1;
+	ULONG m_refCount = 1;
 };

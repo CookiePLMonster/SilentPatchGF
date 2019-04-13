@@ -19,17 +19,17 @@ HRESULT DirectDraw7_RwD3D9::QueryInterface(REFIID riid, LPVOID * ppvObj)
 	}
 
 	*ppvObj = nullptr;
-	return E_POINTER;
+	return E_NOINTERFACE;
 }
 
 ULONG DirectDraw7_RwD3D9::AddRef(void)
 {
-	return _InterlockedIncrement( &m_refCount );
+	return InterlockedIncrement( &m_refCount );
 }
 
 ULONG DirectDraw7_RwD3D9::Release(void)
 {
-	LONG ref = _InterlockedDecrement( &m_refCount );
+	ULONG ref = InterlockedDecrement( &m_refCount );
 	if ( ref == 0 )
 	{
 		delete this;

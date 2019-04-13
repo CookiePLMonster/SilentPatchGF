@@ -105,7 +105,7 @@ public:
 private:
 	void CreateYUY2Shader();
 
-	LONG m_refCount = 1;
+	ULONG m_refCount = 1;
 	void* m_yuy2Shader = nullptr;
 
 	static DD7_RwD3D9OverlayRenderQueue ms_overlayRenderQueue;
