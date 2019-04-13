@@ -48,6 +48,9 @@
     <ClInclude Include="RW.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="LateStaticInit.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SilentPatchGF.cpp">

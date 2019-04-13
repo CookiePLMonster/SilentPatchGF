@@ -116,6 +116,7 @@
     <ClInclude Include="Patterns.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="RW.h" />
+    <ClInclude Include="LateStaticInit.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DirectDraw7Surface_RwD3D9.cpp" />
