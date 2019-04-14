@@ -29,6 +29,7 @@ public:
 
 		// Predicate failed - create a thread and keep trying the predicate until it succeeds
 		HANDLE initThread = CreateThread( nullptr, 0, ThreadProc, nullptr, 0, nullptr );
+		SetThreadPriority( initThread, THREAD_PRIORITY_ABOVE_NORMAL );
 		CloseHandle( initThread );
 
 		return false;
