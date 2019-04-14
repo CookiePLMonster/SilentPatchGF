@@ -100,6 +100,62 @@ void __stdcall InjectDelayedPatches( int val )
 	DirectDraw7_RwD3D9::OverlayRenderQueue().SetKeepAR( ARmode );
 }
 
+static void InitASI()
+{
+	static LateStaticInit init( []() {
+		const HINSTANCE hInstance = GetModuleHandle( nullptr );
+		std::unique_ptr<ScopedUnprotect::Unprotect> Protect = ScopedUnprotect::UnprotectSectionOrFullModule( hInstance, ".text" );
+		ScopedUnprotect::Section Section2( hInstance, ".rdata");
+
+		using namespace Memory;
+		using namespace hook;
+
+		// Delayed patches
+		{
+			void* addr = get_pattern( "68 BB 7C 00 00 E8", 5 );
+			ReadCall( addr, orgDelayedHookingPoint );
+			InjectHook( addr, InjectDelayedPatches );
+		}
+
+		// Log file relocated to game directory
+		{
+			char** str = get_pattern<char*>( "8B 0D ? ? ? ? 89 15 ? ? ? ? 8D 54 24 14", 2 );
+			strcpy_s( *str, 16, "log.log" );
+		}
+
+		// DirectDraw7 -> RwD3D9 wrapper
+		InjectHook( get_pattern( "89 3B E8 ? ? ? ? 3B C7", 2 ), DirectDrawRwD3D9Create );
+
+		// Disallow writing to HKEY_LOCAL_MACHINE
+		{
+			void* addr = get_pattern( "FF 15 ? ? ? ? 85 C0 75 3D", 2 );
+
+			orgCreateKeyExA = **(decltype(orgCreateKeyExA)**)addr;
+			Patch<const void*>( addr, &pRegCreateKeyExA );
+		}
+
+		// Default to desktop resolution
+		{
+			RECT			desktop;
+			GetWindowRect(GetDesktopWindow(), &desktop);
+
+			Patch( get_pattern( "64 A1 00 00 00 00 50 64 89 25 00 00 00 00 81 EC AC 04 00 00", -7 ), { 0x33, 0xC0, 0xC2, 0x08, 0x00 } ); // xor eax, eax / retn 8
+			Patch<int32_t>( get_pattern( "68 ? ? ? ? 50 E8 ? ? ? ? 50 8D 4C 24 58", 1 ), desktop.right );
+			Patch<int32_t>( get_pattern( "68 ? ? ? ? 51 E8 ? ? ? ? 50 8D 54 24 3C", 1 ), desktop.bottom );
+
+			auto resolution = pattern( "8D 4C 24 30 E8 ? ? ? ? BE" ).get_one();
+			Patch<int32_t>( resolution.get<void>( 9 + 1 ), desktop.right );
+			Patch<int32_t>( resolution.get<void>( 14 + 1 ), desktop.bottom );
+		}
+
+		InstallRenderQueueHook();
+	} );
+
+	LateStaticInit::TryApplyWithPredicate( []() -> bool {
+		return hook::pattern( "BF 94 00 00 00 8B C7" ).count_hint(1).size() != 0;
+	} );
+}
+
 BOOL APIENTRY DllMain(HMODULE hModule, DWORD reason, LPVOID lpReserved)
 {
 	UNREFERENCED_PARAMETER(hModule);
@@ -110,64 +166,21 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD reason, LPVOID lpReserved)
 	case DLL_PROCESS_ATTACH:
 		{
 			hDLLModule = hModule;
-
-			static LateStaticInit init( []() {
-				const HINSTANCE hInstance = GetModuleHandle( nullptr );
-				std::unique_ptr<ScopedUnprotect::Unprotect> Protect = ScopedUnprotect::UnprotectSectionOrFullModule( hInstance, ".text" );
-				ScopedUnprotect::Section Section2( hInstance, ".rdata");
-
-				using namespace Memory;
-				using namespace hook;
-
-				// Delayed patches
-				{
-					void* addr = get_pattern( "68 BB 7C 00 00 E8", 5 );
-					ReadCall( addr, orgDelayedHookingPoint );
-					InjectHook( addr, InjectDelayedPatches );
-				}
-
-				// Log file relocated to game directory
-				{
-					char** str = get_pattern<char*>( "8B 0D ? ? ? ? 89 15 ? ? ? ? 8D 54 24 14", 2 );
-					strcpy_s( *str, 16, "log.log" );
-				}
-
-				// DirectDraw7 -> RwD3D9 wrapper
-				InjectHook( get_pattern( "89 3B E8 ? ? ? ? 3B C7", 2 ), DirectDrawRwD3D9Create );
-
-				// Disallow writing to HKEY_LOCAL_MACHINE
-				{
-					void* addr = get_pattern( "FF 15 ? ? ? ? 85 C0 75 3D", 2 );
-
-					orgCreateKeyExA = **(decltype(orgCreateKeyExA)**)addr;
-					Patch<const void*>( addr, &pRegCreateKeyExA );
-				}
-
-				// Default to desktop resolution
-				{
-					RECT			desktop;
-					GetWindowRect(GetDesktopWindow(), &desktop);
-
-					Patch( get_pattern( "64 A1 00 00 00 00 50 64 89 25 00 00 00 00 81 EC AC 04 00 00", -7 ), { 0x33, 0xC0, 0xC2, 0x08, 0x00 } ); // xor eax, eax / retn 8
-					Patch<int32_t>( get_pattern( "68 ? ? ? ? 50 E8 ? ? ? ? 50 8D 4C 24 58", 1 ), desktop.right );
-					Patch<int32_t>( get_pattern( "68 ? ? ? ? 51 E8 ? ? ? ? 50 8D 54 24 3C", 1 ), desktop.bottom );
-
-					auto resolution = pattern( "8D 4C 24 30 E8 ? ? ? ? BE" ).get_one();
-					Patch<int32_t>( resolution.get<void>( 9 + 1 ), desktop.right );
-					Patch<int32_t>( resolution.get<void>( 14 + 1 ), desktop.bottom );
-				}
-
-				InstallRenderQueueHook();
-			} );
-
-			LateStaticInit::TryApplyWithPredicate( []() -> bool {
-				return hook::pattern( "BF 94 00 00 00 8B C7" ).count_hint(1).size() != 0;
-			} );
 			break;
 		}
 	}
 
 	return TRUE;
+}
+
+extern "C"
+{
+	static LONG InitCount = 0;
+	__declspec(dllexport) void InitializeASI()
+	{
+		if ( _InterlockedCompareExchange( &InitCount, 1, 0 ) != 0 ) return;
+		InitASI();
+	}
 }
 
 extern "C" __declspec(dllexport)
