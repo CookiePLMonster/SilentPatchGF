@@ -5,9 +5,9 @@
 #define _WIN32_WINNT 0x0502
 
 #include <windows.h>
-#include "MemoryMgr.h"
-#include "Patterns.h"
-#include "LateStaticInit.h"
+#include "Utils/MemoryMgr.h"
+#include "Utils/Patterns.h"
+#include "Utils/LateStaticInit.h"
 
 #include "DirectDraw7_RwD3D9.h"
 #include <Shlwapi.h>

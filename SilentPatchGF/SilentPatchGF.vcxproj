@@ -112,11 +112,11 @@
     <ClInclude Include="DirectDraw7Surface_RwD3D9Overlay.h" />
     <ClInclude Include="DirectDraw7Surface_RwD3D9RT.h" />
     <ClInclude Include="DirectDraw7_RwD3D9.h" />
-    <ClInclude Include="MemoryMgr.h" />
-    <ClInclude Include="Patterns.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="RW.h" />
-    <ClInclude Include="LateStaticInit.h" />
+    <ClInclude Include="Utils\LateStaticInit.h" />
+    <ClInclude Include="Utils\MemoryMgr.h" />
+    <ClInclude Include="Utils\Patterns.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DirectDraw7Surface_RwD3D9.cpp" />
@@ -124,9 +124,9 @@
     <ClCompile Include="DirectDraw7_RwD3D9.cpp" />
     <ClCompile Include="guid.cpp" />
     <ClCompile Include="OverlayRenderQueue.cpp" />
-    <ClCompile Include="Patterns.cpp" />
     <ClCompile Include="RW.cpp" />
     <ClCompile Include="SilentPatchGF.cpp" />
+    <ClCompile Include="Utils\Patterns.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="yuy2torgb.hlsl">

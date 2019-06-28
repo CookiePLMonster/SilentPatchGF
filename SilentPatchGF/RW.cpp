@@ -1,8 +1,8 @@
 #include "RW.h"
 
-#include "MemoryMgr.h"
-#include "Patterns.h"
-#include "LateStaticInit.h"
+#include "Utils/MemoryMgr.h"
+#include "Utils/Patterns.h"
+#include "Utils/LateStaticInit.h"
 
 #include <objbase.h>
 

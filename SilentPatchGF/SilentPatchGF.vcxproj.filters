@@ -22,11 +22,14 @@
     <Filter Include="Shaders">
       <UniqueIdentifier>{4cca3453-5aed-4e01-8da1-0319f3d19840}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Utils">
+      <UniqueIdentifier>{3c8fdf4e-42ce-4c0f-b290-7777b2c6049e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Utils">
+      <UniqueIdentifier>{dc9eee38-7443-4da6-8922-a65317a3e87c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="MemoryMgr.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="DirectDraw7_RwD3D9.h">
       <Filter>Header Files\wrappers</Filter>
     </ClInclude>
@@ -42,14 +45,17 @@
     <ClInclude Include="resource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Patterns.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="RW.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="LateStaticInit.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="Utils\LateStaticInit.h">
+      <Filter>Header Files\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\MemoryMgr.h">
+      <Filter>Header Files\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\Patterns.h">
+      <Filter>Header Files\Utils</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -74,8 +80,8 @@
     <ClCompile Include="guid.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Patterns.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="Utils\Patterns.cpp">
+      <Filter>Source Files\Utils</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

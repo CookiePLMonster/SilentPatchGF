@@ -2,8 +2,8 @@
 
 #include <algorithm>
 #include <d3d9.h>
-#include "MemoryMgr.h"
-#include "Patterns.h"
+#include "Utils/MemoryMgr.h"
+#include "Utils/Patterns.h"
 #include "RW.h"
 
 void (*org_rwD3D9SetPixelShader)(void* shader);
